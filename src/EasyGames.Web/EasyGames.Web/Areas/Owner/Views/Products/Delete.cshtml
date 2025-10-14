@@ -1,0 +1,13 @@
+﻿@model EasyGames.Web.Models.Product
+@{
+    ViewData["Title"] = "Delete Product";
+}
+<div class="eg-card">
+    <h3 class="eg-h1">Delete Product</h3>
+    <p>Are you sure you want to delete <b>@Model.Name</b>?</p>
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="Id" />
+        <button class="eg-btn" type="submit">Delete</button>
+        <a class="btn btn-link text-warning" asp-action="Index">Cancel</a>
+    </form>
+</div>

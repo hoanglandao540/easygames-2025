@@ -1,0 +1,30 @@
+﻿@model EasyGames.Web.Models.Customer
+@{
+    ViewData["Title"] = "Create User";
+}
+<section class="eg-card">
+    <h3 class="eg-h1 mb-3">Create User</h3>
+
+    <!-- student-style: simple form with Name + Email -->
+    <form asp-action="Create" method="post">
+        <div class="mb-3">
+            <label class="form-label">Name</label>
+            <input class="form-control eg-input" asp-for="Name" />
+            <span class="text-warning" asp-validation-for="Name"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input class="form-control eg-input" asp-for="Email" />
+            <span class="text-warning" asp-validation-for="Email"></span>
+        </div>
+
+        <button type="submit" class="eg-btn">Save</button>
+        <a asp-action="Index" class="btn btn-link text-warning">Cancel</a>
+    </form>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
