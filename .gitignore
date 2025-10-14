@@ -422,3 +422,4 @@ FodyWeavers.xsd
 /src/EasyGames.Web/EasyGames.Web/Data/easygames.db
 src/EasyGames.Web/EasyGames.Web/Data/easygames.db-shm
 NUL
+*.db-wal
