@@ -1,0 +1,81 @@
+﻿@model IEnumerable<EasyGames.Web.Models.Product>
+@inject EasyGames.Web.Services.ICartService Cart
+@{
+    ViewData["Title"] = "Catalog";
+    var cart = Cart.Get();
+}
+
+<h2 class="eg-h1 mb-3">Catalog</h2>
+
+@if (TempData["toast"] is string toast)
+{
+    <div class="eg-toast">@toast</div>
+    <script>
+        setTimeout(() => document.querySelector('.eg-toast')?.remove(), 2000);
+    </script>
+}
+
+<div class="row g-3">
+    @foreach (var p in Model)
+    {
+        var qty = cart.Rows.FirstOrDefault(r => r.ProductId == p.Id)?.Qty ?? 0;
+        <div class="col-md-4">
+            <div class="eg-card h-100 d-flex flex-column">
+                <div class="fw-bold mb-1">@p.Name</div>
+                <div class="text-secondary mb-2">@p.Code</div>
+                <div class="mb-3">Price: <b class="text-warning">@p.Price.ToString("0.00")</b></div>
+
+                <div class="mt-auto">
+                    @if (qty <= 0)
+                    {
+                        <!-- First time add -->
+                        <a class="eg-btn eg-btn-sm"
+                           asp-area="Storefront"
+                           asp-controller="Cart"
+                           asp-action="Add"
+                           asp-route-id="@p.Id"
+                           asp-route-returnUrl="@(Context.Request.Path + Context.Request.QueryString)">
+                            Add to cart
+                        </a>
+                    }
+                    else
+                    {
+                        <!-- Quantity controls on the card -->
+                        <div class="d-inline-flex align-items-center gap-2">
+                            <a class="eg-btn eg-btn-sm"
+                               asp-area="Storefront"
+                               asp-controller="Cart"
+                               asp-action="Dec"
+                               asp-route-id="@p.Id"
+                               asp-route-returnUrl="@(Context.Request.Path + Context.Request.QueryString)">
+                                &minus;
+                            </a>
+                            <span class="text-warning fw-bold" style="min-width:2ch; text-align:center;">@qty</span>
+                            <a class="eg-btn eg-btn-sm"
+                               asp-area="Storefront"
+                               asp-controller="Cart"
+                               asp-action="Inc"
+                               asp-route-id="@p.Id"
+                               asp-route-returnUrl="@(Context.Request.Path + Context.Request.QueryString)">
+                                +
+                            </a>
+                        </div>
+                        <a class="btn btn-link text-warning ms-2 p-0"
+                           asp-area="Storefront"
+                           asp-controller="Cart"
+                           asp-action="Remove"
+                           asp-route-id="@p.Id"
+                           asp-route-returnUrl="@(Context.Request.Path + Context.Request.QueryString)">
+                            Remove
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<a class="eg-btn mt-3 d-inline-block"
+   asp-area="Storefront" asp-controller="Cart" asp-action="Index">
+    View Cart
+</a>

@@ -1,0 +1,9 @@
+﻿@model int
+@{
+    ViewData["Title"] = "Order Success";
+}
+<div class="eg-card">
+    <h3 class="eg-h1 mb-2">Thank you!</h3>
+    <p>Your order <b>#@Model</b> was created.</p>
+    <a class="eg-btn" asp-area="Storefront" asp-controller="Catalog" asp-action="Index">Back to Catalog</a>
+</div>

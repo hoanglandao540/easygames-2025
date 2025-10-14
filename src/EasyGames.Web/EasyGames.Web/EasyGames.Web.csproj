@@ -18,8 +18,6 @@
   <ItemGroup>
     <Folder Include="Areas\Shop\Controllers\" />
     <Folder Include="Areas\Shop\Views\" />
-    <Folder Include="Areas\Storefront\Controllers\" />
-    <Folder Include="Areas\Storefront\Views\" />
   </ItemGroup>
 
 </Project>
