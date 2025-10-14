@@ -3,6 +3,7 @@
 
 using EasyGames.Web.Data;
 using EasyGames.Web.Services;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using System.IO;
 
@@ -21,6 +22,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // 3) DI for our services
 builder.Services.AddScoped<IInventoryService, InventoryService>();
+builder.Services.AddHttpContextAccessor();             
+builder.Services.AddSession();                          
+builder.Services.AddScoped<ICartService, CartService>(); 
+
 
 var app = builder.Build();
 
@@ -43,6 +48,7 @@ using (var scope = app.Services.CreateScope())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+app.UseSession();
 
 // 7) Routes: Areas FIRST, then default
 app.MapControllerRoute(

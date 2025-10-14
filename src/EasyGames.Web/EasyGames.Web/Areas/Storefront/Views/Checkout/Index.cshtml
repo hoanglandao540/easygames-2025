@@ -1,0 +1,45 @@
+﻿@model EasyGames.Web.ViewModels.CheckoutVM
+@{
+    ViewData["Title"] = "Checkout"; var cart = (EasyGames.Web.ViewModels.CartVM)ViewBag.Cart;
+}
+
+<h2 class="eg-h1 mb-3">Checkout</h2>
+
+@if (!cart.Rows.Any())
+{
+    <div class="eg-card">Cart is empty.</div>
+}
+else
+{
+    <div class="row g-3">
+        <div class="col-md-6">
+            <div class="eg-card">
+                <h5 class="text-warning">Your details</h5>
+                <form method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Name</label>
+                        <input class="form-control eg-input" asp-for="CustomerName" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input class="form-control eg-input" asp-for="CustomerEmail" />
+                    </div>
+                    <button class="eg-btn" type="submit">Pay</button>
+                    <a class="btn btn-link text-warning" asp-area="Storefront" asp-controller="Cart" asp-action="Index">Back to cart</a>
+                </form>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="eg-card">
+                <h5 class="text-warning">Summary</h5>
+                <ul class="mb-2">
+                    @foreach (var r in cart.Rows)
+                    {
+                        <li>@r.Name × @r.Qty — @r.LineTotal.ToString("0.00")</li>
+                    }
+                </ul>
+                <div><b>Total: @cart.GrandTotal.ToString("0.00")</b></div>
+            </div>
+        </div>
+    </div>
+}
