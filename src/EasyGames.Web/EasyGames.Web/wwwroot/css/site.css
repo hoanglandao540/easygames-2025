@@ -1,22 +1,162 @@
-html {
-  font-size: 14px;
+/* Midnight + Gold theme  */
+:root {
+    --eg-bg: #0b0f17;
+    --eg-surface: #121826;
+    --eg-text: #e7eefb;
+    --eg-gold: #d4b25d;
+    --eg-gold2: #f1d386;
+    --eg-border: #1f2940;
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+.eg-bg {
+    background: var(--eg-bg);
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+.eg-surface {
+    background: var(--eg-surface);
 }
 
-html {
-  position: relative;
-  min-height: 100%;
+.eg-border {
+    border-color: var(--eg-border) !important;
 }
 
-body {
-  margin-bottom: 60px;
+.text-light {
+    color: var(--eg-text) !important;
+}
+
+.text-warning {
+    color: var(--eg-gold) !important;
+}
+
+.eg-nav {
+    color: var(--eg-text);
+    text-decoration: none;
+}
+
+    .eg-nav:hover {
+        color: var(--eg-gold);
+    }
+
+.eg-card {
+    background: var(--eg-surface);
+    border: 1px solid var(--eg-border);
+    border-radius: 18px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.35);
+    padding: 16px;
+}
+
+.eg-btn {
+    background: var(--eg-gold);
+    color: #1b1b1b;
+    border: 0;
+    border-radius: 12px;
+    padding: .5rem 1rem;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+    .eg-btn:hover {
+        background: var(--eg-gold2);
+        color: #000;
+    }
+/* compact button when needed */
+.eg-btn-sm {
+    padding: .35rem .75rem;
+    font-size: .9rem;
+    border-radius: 10px;
+}
+/* spacing between stacked buttons */
+.eg-btn + .eg-btn {
+    margin-left: .5rem;
+}
+
+.eg-input {
+    background: #0f1522;
+    border: 1px solid var(--eg-border);
+    color: var(--eg-text);
+}
+
+.eg-table {
+    --bs-table-bg: var(--eg-surface);
+    --bs-table-color: var(--eg-text);
+    --bs-table-border-color: var(--eg-border);
+}
+
+/* typography */
+.eg-note {
+    color: #9fb4ff;
+    font-size: .95rem
+}
+
+.eg-h1 {
+    font-weight: 700;
+    color: var(--eg-gold);
+}
+
+a {
+    text-decoration: none;
+}
+
+/* ===== Tables: visibility + alignment + spacing ===== */
+.table.eg-table, .eg-table.table {
+    --bs-table-color: var(--eg-text);
+    --bs-table-bg: var(--eg-surface);
+    --bs-table-border-color: var(--eg-border);
+}
+
+.eg-table th, .eg-table td {
+    color: var(--eg-text) !important;
+    border-color: var(--eg-border) !important;
+    vertical-align: middle; /* center content vertically */
+    padding: .65rem .75rem; /* consistent cell padding */
+}
+
+.eg-table thead th {
+    color: var(--eg-gold) !important;
+    font-weight: 700;
+}
+
+.eg-table tbody tr {
+    border-bottom: 1px solid var(--eg-border);
+}
+
+    .eg-table tbody tr:hover {
+        background-color: #182238 !important;
+    }
+
+.eg-table a {
+    color: var(--eg-gold) !important;
+}
+
+    .eg-table a:hover {
+        color: var(--eg-gold2) !important;
+    }
+
+/* Right-align the last column (actions) and keep content on one line */
+.eg-table th:last-child,
+.eg-table td:last-child {
+    text-align: right;
+    width: 1%;
+    white-space: nowrap;
+}
+
+    /* Add even spacing between multiple action links/buttons */
+    .eg-table td:last-child a,
+    .eg-table td:last-child .eg-btn,
+    .eg-table td:last-child button {
+        display: inline-block;
+        margin-left: .75rem;
+    }
+
+        /* If author uses pipes in markup, soften their look a bit */
+        .eg-table td:last-child a + a::before,
+        .eg-table td:last-child .eg-btn + a::before,
+        .eg-table td:last-child a + .eg-btn::before {
+            content: "";
+            margin-right: 0;
+        }
+
+/* Optional: make tables full-width but keep comfortable content width on large screens */
+.container .eg-table {
+    width: 100%;
 }

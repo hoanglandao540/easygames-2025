@@ -1,0 +1,24 @@
+﻿@model EasyGames.Web.Models.Product
+@{
+    ViewData["Title"] = "Edit Product";
+}
+<div class="eg-card">
+    <h3 class="eg-h1">Edit Product</h3>
+    <form asp-action="Edit" method="post">
+        <input type="hidden" asp-for="Id" />
+        <div class="mb-3">
+            <label class="form-label">Code</label>
+            <input class="form-control eg-input" asp-for="Code" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Name</label>
+            <input class="form-control eg-input" asp-for="Name" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Price</label>
+            <input class="form-control eg-input" asp-for="Price" />
+        </div>
+        <button class="eg-btn" type="submit">Save</button>
+        <a class="btn btn-link text-warning" asp-action="Index">Cancel</a>
+    </form>
+</div>
