@@ -1,0 +1,20 @@
+﻿@model IEnumerable<EasyGames.Web.Models.Shop>
+@{
+    ViewData["Title"] = "Shops";
+}
+<h2>Owner → Shops (seed check)</h2>
+<p class="eg-note">If you see "Darwin", DB + seed is OK.</p>
+<table class="table eg-table">
+    <thead><tr><th>Code</th><th>City</th><th>Country</th><th>Phone</th></tr></thead>
+    <tbody>
+        @foreach (var s in Model)
+        {
+            <tr>
+                <td>@s.ShopCode</td>
+                <td>@s.City</td>
+                <td>@s.Country</td>
+                <td>@s.Phone</td>
+            </tr>
+        }
+    </tbody>
+</table>
