@@ -1,0 +1,41 @@
+﻿@model IEnumerable<EasyGames.Web.Models.Product>
+@{
+    ViewData["Title"] = "Owner → Products";
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="eg-h1 m-0">Products</h2>
+    <a class="eg-btn" asp-action="Create">+ New</a>
+</div>
+
+@if (TempData["msg"] is string msg)
+{
+    <div class="eg-card mb-3">@msg</div>
+}
+
+<table class="table eg-table table-hover">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Code</th>
+            <th>Name</th>
+            <th class="text-end">Price</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in Model)
+        {
+            <tr>
+                <td>@p.Id</td>
+                <td>@p.Code</td>
+                <td>@p.Name</td>
+                <td class="text-end">@p.Price.ToString("0.00")</td>
+                <td class="text-end">
+                    <a asp-action="Edit" asp-route-id="@p.Id">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@p.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
