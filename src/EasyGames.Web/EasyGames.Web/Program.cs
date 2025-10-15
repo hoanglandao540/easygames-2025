@@ -3,7 +3,7 @@ using EasyGames.Web.Data;
 using EasyGames.Web.Services;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using System.IO;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,6 +46,13 @@ using (var scope = app.Services.CreateScope())
     db.Database.Migrate();   // create/upgrade tables
     DbSeeder.Seed(db);       // insert sample rows once
 }
+
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Home/Error");
+    app.UseStatusCodePages();
+}
+
 
 // 6) Middleware
 app.UseHttpsRedirection();
