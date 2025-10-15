@@ -1,5 +1,4 @@
-﻿@using EasyGames.Web.Models
-@{
+﻿@{
     ViewData["Title"] = "Register";
 }
 <h2 class="eg-h1 mb-3">Register</h2>
@@ -22,20 +21,15 @@
             <input name="email" class="form-control eg-input" />
         </div>
 
-        <div class="mb-2">
+        <div class="mb-3">
             <label>Password</label>
             <input name="password" type="password" class="form-control eg-input" />
         </div>
 
-        <div class="mb-3">
-            <label>Role</label>
-            <select name="role" class="form-select eg-input">
-                <option value="@AppRole.Customer">Customer</option>
-                <option value="@AppRole.Shop">Shop</option>
-                <option value="@AppRole.Owner">Owner</option>
-            </select>
-        </div>
-
         <button class="eg-btn" type="submit">Create Account</button>
+        <p class="eg-note mt-2">By signing up you create a <strong>Customer</strong> account.</p>
     </form>
 </div>
+
+
+
