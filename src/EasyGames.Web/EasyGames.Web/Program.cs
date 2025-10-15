@@ -24,7 +24,12 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<IInventoryService, InventoryService>();
 builder.Services.AddHttpContextAccessor();             
 builder.Services.AddSession();                          
-builder.Services.AddScoped<ICartService, CartService>(); 
+builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<EasyGames.Web.Services.ITierService, EasyGames.Web.Services.TierService>();   
+builder.Services.AddScoped<EasyGames.Web.Services.IEmailService, EasyGames.Web.Services.EmailService>(); 
+builder.Services.AddScoped<EasyGames.Web.Services.IPosCartService, EasyGames.Web.Services.PosCartService>(); 
+
+
 
 
 var app = builder.Build();

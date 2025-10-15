@@ -1,0 +1,113 @@
+﻿@model EasyGames.Web.ViewModels.PosCartVM
+@{
+    ViewData["Title"] = "Shop POS";
+    var products = (List<EasyGames.Web.Models.Product>)ViewBag.Products;
+    var shops = (List<EasyGames.Web.Models.Shop>)ViewBag.Shops;
+}
+
+<h2 class="eg-h1 mb-3">POS</h2>
+
+@if (TempData["toast"] is string toast)
+{
+    <div class="eg-toast">@toast</div>
+    <script>setTimeout(()=>document.querySelector('.eg-toast')?.remove(),2000);</script>
+}
+
+<!-- ADD LINE (separate form, explicitly targeted) -->
+<div class="eg-card mb-3">
+    <form asp-area="Shop" asp-controller="Pos" asp-action="AddLine" method="post" class="row g-2 align-items-end">
+        @Html.AntiForgeryToken()
+        <div class="col-md-5">
+            <label class="form-label">Product</label>
+            <select name="productId" class="form-select eg-input">
+                @foreach (var p in products)
+                {
+                    <option value="@p.Id">@p.Name (@p.Price.ToString("0.00"))</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Qty</label>
+            <input name="qty" type="number" min="1" value="1" class="form-control eg-input" />
+        </div>
+        <div class="col-md-2">
+            <button class="eg-btn" type="submit">Add</button>
+        </div>
+        <div class="col-md-2 text-end">
+            <a class="eg-btn eg-btn-sm" asp-area="Shop" asp-controller="Pos" asp-action="Clear">Clear</a>
+        </div>
+    </form>
+</div>
+
+@if (!Model.Rows.Any())
+{
+    <div class="eg-card">No items yet.</div>
+}
+else
+{
+    <table class="table eg-table table-hover">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th class="text-end">Price</th>
+                <th class="text-center">Qty</th>
+                <th class="text-end">Line</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var r in Model.Rows)
+            {
+                <tr>
+                    <td>@r.Name</td>
+                    <td class="text-end">@r.Price.ToString("0.00")</td>
+                    <td class="text-center">
+                        <a class="eg-btn eg-btn-sm" asp-area="Shop" asp-controller="Pos" asp-action="Dec" asp-route-id="@r.ProductId">&minus;</a>
+                        <span class="mx-2">@r.Qty</span>
+                        <a class="eg-btn eg-btn-sm" asp-area="Shop" asp-controller="Pos" asp-action="Inc" asp-route-id="@r.ProductId">+</a>
+                    </td>
+                    <td class="text-end">@r.LineTotal.ToString("0.00")</td>
+                    <td class="text-end">
+                        <a asp-area="Shop" asp-controller="Pos" asp-action="Remove" asp-route-id="@r.ProductId">Remove</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <th colspan="3" class="text-end">Grand Total</th>
+                <th class="text-end">@Model.GrandTotal.ToString("0.00")</th>
+                <th></th>
+            </tr>
+        </tfoot>
+    </table>
+
+    <!-- PAY (separate form, explicitly targeted) -->
+    <div class="eg-card">
+        <form asp-area="Shop" asp-controller="Pos" asp-action="Pay" method="post" class="row g-2" novalidate>
+            @Html.AntiForgeryToken()
+            <div class="col-md-3">
+                <label class="form-label">Shop</label>
+                <select name="shopId" class="form-select eg-input">
+                    @foreach (var s in shops)
+                    {
+                        <option value="@s.Id">@s.ShopCode - @s.City</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Customer Name</label>
+                <input name="customerName" class="form-control eg-input" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Customer Email</label>
+                <input name="customerEmail" class="form-control eg-input" />
+            </div>
+            <div class="col-md-3 d-flex align-items-end justify-content-end">
+                <button class="eg-btn" type="submit">Pay</button>
+            </div>
+        </form>
+    </div>
+}
+
+
