@@ -1,8 +1,9 @@
 ﻿using EasyGames.Web.Models;
+using EasyGames.Web.Services; 
+
 
 namespace EasyGames.Web.Data
 {
-    // student-style: insert sample rows if DB is empty
     public static class DbSeeder
     {
         public static void Seed(AppDbContext db)
@@ -17,12 +18,16 @@ namespace EasyGames.Web.Data
                 db.SaveChanges();
             }
 
+
+            // ---  seed for Shops ---
             if (!db.Shops.Any())
             {
                 db.Shops.Add(new Shop { ShopCode = "DRW-01", City = "Darwin", Country = "AU", Phone = "+61-8-0000-0000" });
                 db.SaveChanges();
             }
 
+
+            // ---  seed for ShopStocks ---
             var shopId = db.Shops.First().Id;
             if (!db.ShopStocks.Any())
             {
@@ -35,11 +40,14 @@ namespace EasyGames.Web.Data
                 db.SaveChanges();
             }
 
-            if (!db.Customers.Any())
+
+            // ---  seed  demo users for roles ---
+            if (!db.AppUsers.Any())
             {
-                db.Customers.AddRange(
-                    new Customer { Name = "Alice", Email = "alice@example.com" },
-                    new Customer { Name = "Bob", Email = "bob@example.com" }
+                db.AppUsers.AddRange(
+                    new AppUser { Name = "Owner One", Email = "owner@example.com", PasswordHash = Password.Hash("owner123"), Role = AppRole.Owner },
+                    new AppUser { Name = "Shop Clerk", Email = "clerk@example.com", PasswordHash = Password.Hash("clerk123"), Role = AppRole.Shop },
+                    new AppUser { Name = "Alice", Email = "alice@example.com", PasswordHash = Password.Hash("alice123"), Role = AppRole.Customer }
                 );
                 db.SaveChanges();
             }

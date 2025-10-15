@@ -1,0 +1,25 @@
+﻿namespace EasyGames.Web.Models
+{
+    // simple roles mapped to Areas
+    public enum AppRole
+    {
+        Owner = 0,
+        Shop = 1,
+        Customer = 2
+    }
+
+
+    public class AppUser
+    {
+        public int Id { get; set; }              // PK
+        public string Name { get; set; } = "";   // display name
+        public string Email { get; set; } = "";  // login username
+        public string PasswordHash { get; set; } = ""; 
+        public AppRole Role { get; set; }        // role per Area
+    }
+}
+
+
+
+
+
