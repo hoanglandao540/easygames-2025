@@ -1,34 +1,42 @@
-﻿@model IEnumerable<EasyGames.Web.Models.Customer>
+﻿@using EasyGames.Web.Models
 @{
-    ViewData["Title"] = "Owner → Users";
+    ViewData["Title"] = "Create User (Admin)";
 }
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h2 class="eg-h1 m-0">Users</h2>
-    <a class="eg-btn" asp-action="Create">+ New</a>
-</div>
-
-@if (TempData["msg"] is string msg)
+<h2 class="eg-h1 mb-3">Create User</h2>
+@if (TempData["toast"] is string t)
 {
-    <div class="eg-card mb-3">@msg</div>
+    <div class="eg-toast">@t</div>
 }
 
-<table class="table eg-table table-hover">
-    <thead>
-        <tr><th>Id</th><th>Name</th><th>Email</th><th></th></tr>
-    </thead>
-    <tbody>
-        @foreach (var u in Model)
-        {
-            <tr>
-                <td>@u.Id</td>
-                <td>@u.Name</td>
-                <td>@u.Email</td>
-                <td class="text-end">
-                    <a asp-action="Edit" asp-route-id="@u.Id">Edit</a> |
-                    <a asp-action="Delete" asp-route-id="@u.Id">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="eg-card p-3">
+    <form asp-action="Create" method="post">
+        @Html.AntiForgeryToken()
 
+        <div class="mb-2">
+            <label>Name</label>
+            <input name="name" class="form-control eg-input" />
+        </div>
+
+        <div class="mb-2">
+            <label>Email</label>
+            <input name="email" class="form-control eg-input" />
+        </div>
+
+        <div class="mb-2">
+            <label>Password</label>
+            <input name="password" type="password" class="form-control eg-input" />
+        </div>
+
+        <div class="mb-3">
+            <label>Role</label>
+            <select name="role" class="form-select eg-input">
+                <option value="@AppRole.Customer">Customer</option>
+                <option value="@AppRole.Shop">Shop</option>
+                <option value="@AppRole.Owner">Owner</option>
+            </select>
+        </div>
+
+        <button class="eg-btn" type="submit">Save</button>
+        <a class="btn btn-link text-warning" asp-action="Index">Back</a>
+    </form>
+</div>
