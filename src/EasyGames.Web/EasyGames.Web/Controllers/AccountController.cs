@@ -9,21 +9,19 @@ using System.Security.Claims;
 
 namespace EasyGames.Web.Controllers
 {
-    // simple cookie-based account controller (no Identity)
     public class AccountController : Controller
     {
         private readonly AppDbContext _db;
         public AccountController(AppDbContext db) { _db = db; }
 
-        // GET: /Account/Register
+        // GET: /Account/Register  (public)
         [HttpGet, AllowAnonymous]
         public IActionResult Register() => View();
 
-        // POST: /Account/Register
+        // POST: /Account/Register  (public)  --> ALWAYS creates Customer
         [HttpPost, ValidateAntiForgeryToken, AllowAnonymous]
-        public IActionResult Register(string name, string email, string password, AppRole role)
+        public IActionResult Register(string name, string email, string password)
         {
-            // student-style validation
             if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
             {
                 TempData["toast"] = "Email and password are required.";
@@ -38,19 +36,19 @@ namespace EasyGames.Web.Controllers
 
             var user = new AppUser
             {
-                Name = name?.Trim() ?? "",
+                Name = (name ?? "").Trim(),
                 Email = email.Trim(),
                 PasswordHash = Password.Hash(password),
-                Role = role
+                Role = AppRole.Customer //  force to Customer
             };
             _db.AppUsers.Add(user);
             _db.SaveChanges();
 
-            // after registration, go to login
+            // go to Login after registration
             return RedirectToAction(nameof(Login));
         }
 
-        // GET: /Account/Login
+        // GET: /Account/Login (public)
         [HttpGet, AllowAnonymous]
         public IActionResult Login(string? returnUrl)
         {
@@ -58,7 +56,7 @@ namespace EasyGames.Web.Controllers
             return View();
         }
 
-        // POST: /Account/Login
+        // POST: /Account/Login (public)
         [HttpPost, ValidateAntiForgeryToken, AllowAnonymous]
         public async Task<IActionResult> Login(string email, string password, string? returnUrl)
         {
@@ -72,7 +70,6 @@ namespace EasyGames.Web.Controllers
                 return View();
             }
 
-            // build claims
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
@@ -89,7 +86,6 @@ namespace EasyGames.Web.Controllers
             if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
                 return LocalRedirect(returnUrl);
 
-            // simple landing by role
             return user.Role switch
             {
                 AppRole.Owner => RedirectToAction("Index", "Products", new { area = "Owner" }),
@@ -99,7 +95,7 @@ namespace EasyGames.Web.Controllers
             };
         }
 
-        // POST: /Account/Logout
+        // POST: /Account/Logout (auth only)
         [HttpPost, ValidateAntiForgeryToken, Authorize]
         public async Task<IActionResult> Logout()
         {
