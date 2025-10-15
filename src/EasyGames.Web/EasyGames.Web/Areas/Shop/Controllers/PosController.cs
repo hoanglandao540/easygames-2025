@@ -7,10 +7,12 @@ using EasyGames.Web.Services;
 using EasyGames.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace EasyGames.Web.Areas.Shop.Controllers
 {
     [Area("Shop")]
+    [Authorize(Roles = nameof(AppRole.Shop))]
     public class PosController : Controller
     {
         private readonly AppDbContext _db;
