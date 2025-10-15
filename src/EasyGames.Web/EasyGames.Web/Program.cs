@@ -1,6 +1,4 @@
-﻿// File: src/EasyGames.Web/Program.cs
-// student-style: full Program.cs with a SINGLE absolute SQLite path (same every run)
-
+﻿
 using EasyGames.Web.Data;
 using EasyGames.Web.Services;
 using Microsoft.AspNetCore.Cors.Infrastructure;
@@ -13,9 +11,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
 // 2) ONE SQLite file path for runtime (no relative path confusion)
-var contentRoot = builder.Environment.ContentRootPath;               // <project folder>
+var contentRoot = builder.Environment.ContentRootPath;               
 var dbPath = Path.Combine(contentRoot, "data", "easygames.db");      // <project>\data\easygames.db
-Directory.CreateDirectory(Path.GetDirectoryName(dbPath)!);           // make sure \data exists
+Directory.CreateDirectory(Path.GetDirectoryName(dbPath)!);           
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite($"Data Source={dbPath}"));
@@ -53,6 +51,9 @@ using (var scope = app.Services.CreateScope())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.UseSession();
 
 // 7) Routes: Areas FIRST, then default
