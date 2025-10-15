@@ -1,0 +1,120 @@
+﻿@{
+    ViewData["Title"] = "Welcome (Guest)";
+}
+<section class="container py-5">
+    <div class="text-center mb-4">
+        <h1 class="eg-h1">Welcome to EasyGames</h1>
+        <p class="lead">Role-based game store management with a simple, student-friendly UI.</p>
+    </div>
+
+    <!-- Role overview cards -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-6 col-lg-3">
+            <div class="eg-card p-4 h-100">
+                <h4 class="mb-2">Owner (Admin)</h4>
+                <p class="mb-3">
+                    Full control: manage products, users, shops & stock. Review performance and send emails to customers.
+                </p>
+                <a class="eg-btn eg-btn-sm" asp-controller="Account" asp-action="Login">Admin Login</a>
+                <p class="eg-note mt-2">Owner users are created by admin (no public sign-up).</p>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="eg-card p-4 h-100">
+                <h4 class="mb-2">Shop Proprietor</h4>
+                <p class="mb-3">
+                    Operate your shop: sell via POS, watch low stock warnings. Stock is provisioned by the Owner.
+                </p>
+                <a class="eg-btn eg-btn-sm" asp-controller="Account" asp-action="Login">Shop Login</a>
+                <p class="eg-note mt-2">Shop users are created by Owner (no public sign-up).</p>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="eg-card p-4 h-100">
+                <h4 class="mb-2">Customer</h4>
+                <p class="mb-3">
+                    Browse the catalog, add to cart, and checkout. View order history (optional) and earn status tiers.
+                </p>
+                <div class="d-flex gap-2">
+                    <a class="eg-btn eg-btn-sm" asp-controller="Account" asp-action="Login">Customer Login</a>
+                    <a class="eg-btn eg-btn-sm" asp-controller="Account" asp-action="Register">Register</a>
+                </div>
+                <p class="eg-note mt-2">Public registration creates a <strong>Customer</strong> account.</p>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="eg-card p-4 h-100">
+                <h4 class="mb-2">Guest Mode</h4>
+                <p class="mb-3">
+                    Just looking? Continue as guest to browse the catalog. You must sign in to purchase.
+                </p>
+                <a class="eg-btn eg-btn-sm" asp-area="Storefront" asp-controller="Catalog" asp-action="Index">Browse Catalog</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feature highlights -->
+    <div class="mb-3">
+        <h3 class="eg-h1">Shop Features</h3>
+        <p class="eg-note">A quick look at what each role can do.</p>
+    </div>
+    <div class="row g-4 mb-5">
+        <div class="col-md-6 col-lg-4">
+            <div class="eg-card p-4 h-100">
+                <h5 class="mb-2">Owner Dashboard</h5>
+                <ul class="mb-0">
+                    <li>Products CRUD and shop stock management</li>
+                    <li>Create Owner/Shop/Customer users</li>
+                    <li>Email service stub ready (bulk email UI optional)</li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="eg-card p-4 h-100">
+                <h5 class="mb-2">Shop POS</h5>
+                <ul class="mb-0">
+                    <li>Easy add-line and Pay flow</li>
+                    <li>Stock decreases safely (no negatives)</li>
+                    <li>Low stock awareness</li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="eg-card p-4 h-100">
+                <h5 class="mb-2">Customer Storefront</h5>
+                <ul class="mb-0">
+                    <li>Catalog grid with quick add & quantity controls</li>
+                    <li>Cart page with +/−/remove/clear</li>
+                    <li>Checkout (Customer-only)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tech specs -->
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="eg-card p-4 h-100">
+                <h5 class="mb-2">Security & Access</h5>
+                <ul class="mb-0">
+                    <li>Cookie auth with roles (Owner / Shop / Customer)</li>
+                    <li>Public sign-up restricted to <strong>Customer</strong></li>
+                    <li>Owner & Shop users are admin-created</li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="eg-card p-4 h-100">
+                <h5 class="mb-2">Stack</h5>
+                <ul class="mb-0">
+                    <li>ASP.NET Core MVC (.NET 8), SQLite</li>
+                    <li>EF Core migrations + seeding</li>
+                    <li>Midnight + Gold theme</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
