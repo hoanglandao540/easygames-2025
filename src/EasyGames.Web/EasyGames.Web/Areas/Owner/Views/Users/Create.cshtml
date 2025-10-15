@@ -1,30 +1,42 @@
-﻿@model EasyGames.Web.Models.Customer
+﻿@using EasyGames.Web.Models
 @{
-    ViewData["Title"] = "Create User";
+    ViewData["Title"] = "Create User (Admin)";
 }
-<section class="eg-card">
-    <h3 class="eg-h1 mb-3">Create User</h3>
+<h2 class="eg-h1 mb-3">Create User</h2>
+@if (TempData["toast"] is string t)
+{
+    <div class="eg-toast">@t</div>
+}
 
-    <!-- student-style: simple form with Name + Email -->
+<div class="eg-card p-3">
     <form asp-action="Create" method="post">
-        <div class="mb-3">
-            <label class="form-label">Name</label>
-            <input class="form-control eg-input" asp-for="Name" />
-            <span class="text-warning" asp-validation-for="Name"></span>
+        @Html.AntiForgeryToken()
+
+        <div class="mb-2">
+            <label>Name</label>
+            <input name="name" class="form-control eg-input" />
+        </div>
+
+        <div class="mb-2">
+            <label>Email</label>
+            <input name="email" class="form-control eg-input" />
+        </div>
+
+        <div class="mb-2">
+            <label>Password</label>
+            <input name="password" type="password" class="form-control eg-input" />
         </div>
 
         <div class="mb-3">
-            <label class="form-label">Email</label>
-            <input class="form-control eg-input" asp-for="Email" />
-            <span class="text-warning" asp-validation-for="Email"></span>
+            <label>Role</label>
+            <select name="role" class="form-select eg-input">
+                <option value="@AppRole.Customer">Customer</option>
+                <option value="@AppRole.Shop">Shop</option>
+                <option value="@AppRole.Owner">Owner</option>
+            </select>
         </div>
 
-        <button type="submit" class="eg-btn">Save</button>
-        <a asp-action="Index" class="btn btn-link text-warning">Cancel</a>
+        <button class="eg-btn" type="submit">Save</button>
+        <a class="btn btn-link text-warning" asp-action="Index">Back</a>
     </form>
-</section>
-
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
-
+</div>
