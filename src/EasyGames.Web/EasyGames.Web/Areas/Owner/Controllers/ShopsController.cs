@@ -1,9 +1,13 @@
 ﻿using EasyGames.Web.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using EasyGames.Web.Models;
+
 
 namespace EasyGames.Web.Areas.Owner.Controllers
 {
     [Area("Owner")]
+    [Authorize(Roles = nameof(AppRole.Owner))]
     public class ShopsController : Controller
     {
         private readonly AppDbContext _db;
