@@ -14,11 +14,10 @@ namespace EasyGames.Web.Controllers
         private readonly AppDbContext _db;
         public AccountController(AppDbContext db) { _db = db; }
 
-        // GET: /Account/Register  (public)
+        // ======= PUBLIC REGISTER (Customer-only) =======
         [HttpGet, AllowAnonymous]
         public IActionResult Register() => View();
 
-        // POST: /Account/Register  (public)  --> ALWAYS creates Customer
         [HttpPost, ValidateAntiForgeryToken, AllowAnonymous]
         public IActionResult Register(string name, string email, string password)
         {
@@ -27,7 +26,6 @@ namespace EasyGames.Web.Controllers
                 TempData["toast"] = "Email and password are required.";
                 return View();
             }
-
             if (_db.AppUsers.Any(u => u.Email == email))
             {
                 TempData["toast"] = "Email already exists.";
@@ -39,26 +37,37 @@ namespace EasyGames.Web.Controllers
                 Name = (name ?? "").Trim(),
                 Email = email.Trim(),
                 PasswordHash = Password.Hash(password),
-                Role = AppRole.Customer //  force to Customer
+                Role = AppRole.Customer // 🔒 public sign-up => Customer
             };
             _db.AppUsers.Add(user);
             _db.SaveChanges();
-
-            // go to Login after registration
-            return RedirectToAction(nameof(Login));
+            return RedirectToAction(nameof(LoginCustomer));
         }
 
-        // GET: /Account/Login (public)
+        // ======= ROLE-SPECIFIC LOGINS =======
         [HttpGet, AllowAnonymous]
-        public IActionResult Login(string? returnUrl)
-        {
-            ViewBag.ReturnUrl = returnUrl;
-            return View();
-        }
+        public IActionResult LoginOwner(string? returnUrl) { ViewBag.ReturnUrl = returnUrl; return View(); }
 
-        // POST: /Account/Login (public)
         [HttpPost, ValidateAntiForgeryToken, AllowAnonymous]
-        public async Task<IActionResult> Login(string email, string password, string? returnUrl)
+        public async Task<IActionResult> LoginOwner(string email, string password, string? returnUrl)
+            => await DoLogin(email, password, AppRole.Owner, "/Owner/Dashboard", returnUrl, "This page is for Owner login.");
+
+        [HttpGet, AllowAnonymous]
+        public IActionResult LoginShop(string? returnUrl) { ViewBag.ReturnUrl = returnUrl; return View(); }
+
+        [HttpPost, ValidateAntiForgeryToken, AllowAnonymous]
+        public async Task<IActionResult> LoginShop(string email, string password, string? returnUrl)
+            => await DoLogin(email, password, AppRole.Shop, "/Shop/Dashboard", returnUrl, "This page is for Shop Proprietor login.");
+
+        [HttpGet, AllowAnonymous]
+        public IActionResult LoginCustomer(string? returnUrl) { ViewBag.ReturnUrl = returnUrl; return View(); }
+
+        [HttpPost, ValidateAntiForgeryToken, AllowAnonymous]
+        public async Task<IActionResult> LoginCustomer(string email, string password, string? returnUrl)
+            => await DoLogin(email, password, AppRole.Customer, "/Storefront/Dashboard", returnUrl, "This page is for Customer login.");
+
+        // ======= SHARED LOGIN CORE =======
+        private async Task<IActionResult> DoLogin(string email, string password, AppRole requiredRole, string defaultLanding, string? returnUrl, string wrongRoleMsg)
         {
             var hash = Password.Hash(password ?? "");
             var user = _db.AppUsers.FirstOrDefault(u => u.Email == email && u.PasswordHash == hash);
@@ -66,6 +75,12 @@ namespace EasyGames.Web.Controllers
             if (user == null)
             {
                 TempData["toast"] = "Invalid email or password.";
+                ViewBag.ReturnUrl = returnUrl;
+                return View();
+            }
+            if (user.Role != requiredRole)
+            {
+                TempData["toast"] = wrongRoleMsg;
                 ViewBag.ReturnUrl = returnUrl;
                 return View();
             }
@@ -78,24 +93,27 @@ namespace EasyGames.Web.Controllers
                 new Claim(ClaimTypes.Role, user.Role.ToString())
             };
             var id = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(id)
-            );
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
 
             if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
                 return LocalRedirect(returnUrl);
 
-            return user.Role switch
-            {
-                AppRole.Owner => RedirectToAction("Index", "Products", new { area = "Owner" }),
-                AppRole.Shop => RedirectToAction("Index", "Pos", new { area = "Shop" }),
-                AppRole.Customer => RedirectToAction("Index", "Catalog", new { area = "Storefront" }),
-                _ => RedirectToAction("Index", "Home")
-            };
+            // redirect to dashboard by role
+            return Redirect(defaultLanding);
         }
 
-        // POST: /Account/Logout (auth only)
+        [Authorize]
+        public IActionResult Profile()
+        {
+            var idStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!int.TryParse(idStr, out var uid)) return RedirectToAction("LoginCustomer");
+            var me = _db.AppUsers.FirstOrDefault(u => u.Id == uid);
+            if (me == null) return RedirectToAction("LoginCustomer");
+
+            return View(me);
+        }
+
+        // ======= LOGOUT =======
         [HttpPost, ValidateAntiForgeryToken, Authorize]
         public async Task<IActionResult> Logout()
         {
@@ -103,11 +121,9 @@ namespace EasyGames.Web.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        // GET: /Account/Denied
         [HttpGet, AllowAnonymous]
         public IActionResult Denied() => View();
     }
 }
-
 
 
