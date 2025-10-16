@@ -1,0 +1,33 @@
+﻿@model IEnumerable<EasyGames.Web.Models.OwnerStock>
+@{
+    ViewData["Title"] = "Owner → OwnerStock";
+}
+<h2 class="eg-h1 mb-3">Owner Inventory</h2>
+@if (TempData["toast"] is string t)
+{
+    <div class="eg-card mb-3">@t</div>
+}
+
+<div class="mb-2">
+    <a class="eg-btn" asp-action="Create">+ New Owner Stock</a>
+</div>
+
+<table class="table eg-table table-hover">
+    <thead><tr><th>Product</th><th class="text-end">Qty</th><th>Source</th><th class="text-end">Buy</th><th class="text-end">Sell</th><th></th></tr></thead>
+    <tbody>
+        @foreach (var x in Model)
+        {
+            <tr>
+                <td>@x.Product?.Name</td>
+                <td class="text-end">@x.Qty</td>
+                <td>@x.Source</td>
+                <td class="text-end">@x.BuyPrice.ToString("0.00")</td>
+                <td class="text-end">@x.SellPrice.ToString("0.00")</td>
+                <td class="text-end">
+                    <a asp-action="Edit" asp-route-id="@x.Id">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@x.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

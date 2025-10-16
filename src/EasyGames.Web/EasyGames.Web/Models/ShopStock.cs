@@ -8,5 +8,9 @@
         public int ProductId { get; set; }
         public int Qty { get; set; }
         public int ReorderLevel { get; set; } = 3;
+        public string Source { get; set; } = "";
+        public decimal BuyPrice { get; set; }
+        public decimal SellPrice { get; set; }  
+
     }
 }

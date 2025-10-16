@@ -1,0 +1,14 @@
+﻿@model EasyGames.Web.Models.OwnerStock
+@{
+    ViewData["Title"] = "Delete Owner Stock";
+}
+<section class="eg-card p-3">
+    <h3 class="eg-h1 mb-2">Delete Owner Stock</h3>
+    <p>Product: <b>@Model.ProductId</b>, Qty: <b>@Model.Qty</b>, Source: <b>@Model.Source</b></p>
+    <form asp-action="Delete" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <button class="eg-btn" type="submit">Delete</button>
+        <a class="btn btn-link text-warning" asp-action="Index">Cancel</a>
+    </form>
+</section>
