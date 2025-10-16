@@ -7,9 +7,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 <<<<<<< HEAD
+<<<<<<< HEAD
 using Microsoft.EntityFrameworkCore;
 =======
 >>>>>>> feature/akshata/data-shops
+=======
+using Microsoft.EntityFrameworkCore;
+>>>>>>> origin/feature/hoang/pos-tier-email
 
 namespace EasyGames.Web.Controllers
 {
@@ -24,10 +28,14 @@ namespace EasyGames.Web.Controllers
 
         [HttpPost, ValidateAntiForgeryToken, AllowAnonymous]
 <<<<<<< HEAD
+<<<<<<< HEAD
         public IActionResult Register(string name, string email, string password, string? phone)
 =======
         public IActionResult Register(string name, string email, string password)
 >>>>>>> feature/akshata/data-shops
+=======
+        public IActionResult Register(string name, string email, string password, string? phone)
+>>>>>>> origin/feature/hoang/pos-tier-email
         {
             if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
             {
@@ -45,6 +53,7 @@ namespace EasyGames.Web.Controllers
                 Name = (name ?? "").Trim(),
                 Email = email.Trim(),
 <<<<<<< HEAD
+<<<<<<< HEAD
                 Phone = (phone ?? "").Trim(),
                 PasswordHash = Password.Hash(password),
                 Role = AppRole.Customer
@@ -54,12 +63,20 @@ namespace EasyGames.Web.Controllers
 
             TempData["toast"] = "Account created! Please login.";
 =======
+=======
+                Phone = (phone ?? "").Trim(),
+>>>>>>> origin/feature/hoang/pos-tier-email
                 PasswordHash = Password.Hash(password),
-                Role = AppRole.Customer // public sign-up => Customer
+                Role = AppRole.Customer
             };
             _db.AppUsers.Add(user);
             _db.SaveChanges();
+<<<<<<< HEAD
 >>>>>>> feature/akshata/data-shops
+=======
+
+            TempData["toast"] = "Account created! Please login.";
+>>>>>>> origin/feature/hoang/pos-tier-email
             return RedirectToAction(nameof(LoginCustomer));
         }
 
@@ -90,10 +107,14 @@ namespace EasyGames.Web.Controllers
         {
             var hash = Password.Hash(password ?? "");
 <<<<<<< HEAD
+<<<<<<< HEAD
             var user = await _db.AppUsers.FirstOrDefaultAsync(u => u.Email == email && u.PasswordHash == hash);
 =======
             var user = _db.AppUsers.FirstOrDefault(u => u.Email == email && u.PasswordHash == hash);
 >>>>>>> feature/akshata/data-shops
+=======
+            var user = await _db.AppUsers.FirstOrDefaultAsync(u => u.Email == email && u.PasswordHash == hash);
+>>>>>>> origin/feature/hoang/pos-tier-email
 
             if (user == null)
             {
@@ -116,6 +137,9 @@ namespace EasyGames.Web.Controllers
                 new Claim(ClaimTypes.Role, user.Role.ToString())
             };
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> origin/feature/hoang/pos-tier-email
 
             // Add phone claim for customers (needed for order history)
             if (!string.IsNullOrWhiteSpace(user.Phone))
@@ -123,8 +147,11 @@ namespace EasyGames.Web.Controllers
                 claims.Add(new Claim(ClaimTypes.MobilePhone, user.Phone));
             }
 
+<<<<<<< HEAD
 =======
 >>>>>>> feature/akshata/data-shops
+=======
+>>>>>>> origin/feature/hoang/pos-tier-email
             var id = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
 
@@ -135,24 +162,35 @@ namespace EasyGames.Web.Controllers
         }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         // ===== Logout =====
 =======
         // ===== Logout (go straight to Guest page) =====
 >>>>>>> feature/akshata/data-shops
+=======
+        // ===== Logout =====
+>>>>>>> origin/feature/hoang/pos-tier-email
         [HttpPost, ValidateAntiForgeryToken, Authorize]
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync();
 <<<<<<< HEAD
+<<<<<<< HEAD
             return RedirectToAction("Guest", "Home");
 =======
             return RedirectToAction("Guest", "Home"); // <- always go to Guest page
 >>>>>>> feature/akshata/data-shops
+=======
+            return RedirectToAction("Guest", "Home");
+>>>>>>> origin/feature/hoang/pos-tier-email
         }
 
         [HttpGet, AllowAnonymous]
         public IActionResult Denied() => View();
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> origin/feature/hoang/pos-tier-email
 
         // ===== Profile =====
         [HttpGet, Authorize]
@@ -163,6 +201,7 @@ namespace EasyGames.Web.Controllers
             if (user == null) return NotFound();
             return View(user);
         }
+<<<<<<< HEAD
     }
 }
 =======
@@ -171,3 +210,7 @@ namespace EasyGames.Web.Controllers
 
 
 >>>>>>> feature/akshata/data-shops
+=======
+    }
+}
+>>>>>>> origin/feature/hoang/pos-tier-email

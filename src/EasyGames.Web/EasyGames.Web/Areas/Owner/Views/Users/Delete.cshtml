@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 ﻿@model EasyGames.Web.Models.AppUser
 @{
     ViewData["Title"] = "Delete User";
@@ -25,24 +26,34 @@
 </div>
 =======
 ﻿@model EasyGames.Web.Models.Customer
+=======
+﻿@model EasyGames.Web.Models.AppUser
+>>>>>>> origin/feature/hoang/pos-tier-email
 @{
     ViewData["Title"] = "Delete User";
 }
-<section class="eg-card">
-    <h3 class="eg-h1 mb-3">Delete User</h3>
+<h2 class="eg-h1 mb-3">Delete User</h2>
 
-    <!-- student-style: simple confirm -->
+<div class="eg-card p-3">
     <p>Are you sure you want to delete this user?</p>
-    <ul class="mb-3">
-        <li><b>Id:</b> @Model.Id</li>
-        <li><b>Name:</b> @Model.Name</li>
-        <li><b>Email:</b> @Model.Email</li>
-    </ul>
+    <dl class="row">
+        <dt class="col-sm-3">Name</dt>
+        <dd class="col-sm-9">@Model.Name</dd>
+        <dt class="col-sm-3">Email</dt>
+        <dd class="col-sm-9">@Model.Email</dd>
+        <dt class="col-sm-3">Role</dt>
+        <dd class="col-sm-9">@Model.Role</dd>
+    </dl>
 
     <form asp-action="Delete" method="post">
+        @Html.AntiForgeryToken()
         <input type="hidden" asp-for="Id" />
-        <button type="submit" class="eg-btn">Delete</button>
-        <a asp-action="Index" class="btn btn-link text-warning">Cancel</a>
+        <button class="eg-btn" type="submit">Delete</button>
+        <a class="btn btn-link text-warning" asp-action="Index">Cancel</a>
     </form>
+<<<<<<< HEAD
 </section>
 >>>>>>> feature/akshata/data-shops
+=======
+</div>
+>>>>>>> origin/feature/hoang/pos-tier-email

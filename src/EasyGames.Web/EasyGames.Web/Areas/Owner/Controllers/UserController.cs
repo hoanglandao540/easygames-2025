@@ -29,10 +29,14 @@ namespace EasyGames.Web.Areas.Owner.Controllers
         // POST: /Owner/Users/Create
         [HttpPost, ValidateAntiForgeryToken]
 <<<<<<< HEAD
+<<<<<<< HEAD
         public IActionResult Create(string name, string email, string password, string? phone, AppRole role)
 =======
         public IActionResult Create(string name, string email, string password, AppRole role)
 >>>>>>> feature/akshata/data-shops
+=======
+        public IActionResult Create(string name, string email, string password, string? phone, AppRole role)
+>>>>>>> origin/feature/hoang/pos-tier-email
         {
             if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
             {
@@ -50,9 +54,13 @@ namespace EasyGames.Web.Areas.Owner.Controllers
                 Name = (name ?? "").Trim(),
                 Email = email.Trim(),
 <<<<<<< HEAD
+<<<<<<< HEAD
                 Phone = (phone ?? "").Trim(),
 =======
 >>>>>>> feature/akshata/data-shops
+=======
+                Phone = (phone ?? "").Trim(),
+>>>>>>> origin/feature/hoang/pos-tier-email
                 PasswordHash = Password.Hash(password),
                 Role = role
             };
@@ -63,6 +71,9 @@ namespace EasyGames.Web.Areas.Owner.Controllers
             return RedirectToAction(nameof(Index));
         }
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> origin/feature/hoang/pos-tier-email
 
         // GET: /Owner/Users/Edit/5
         public IActionResult Edit(int id)
@@ -117,8 +128,12 @@ namespace EasyGames.Web.Areas.Owner.Controllers
             return RedirectToAction(nameof(Index));
         }
     }
+<<<<<<< HEAD
 }
 =======
     }
 }
 >>>>>>> feature/akshata/data-shops
+=======
+}
+>>>>>>> origin/feature/hoang/pos-tier-email

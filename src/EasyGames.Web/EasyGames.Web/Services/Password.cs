@@ -2,6 +2,7 @@
 using System.Text;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 namespace EasyGames.Web.Services
 {
     // NOTE: Improved hashing with salt for better security
@@ -11,11 +12,19 @@ namespace EasyGames.Web.Services
 {
     // NOTE: demo-only hashing; ok for student project
 >>>>>>> feature/akshata/data-shops
+=======
+namespace EasyGames.Web.Services
+{
+    // NOTE: Improved hashing with salt for better security
+>>>>>>> origin/feature/hoang/pos-tier-email
     public static class Password
     {
         public static string Hash(string input)
         {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> origin/feature/hoang/pos-tier-email
             using (var sha = SHA256.Create())
             {
                 var bytes = sha.ComputeHash(Encoding.UTF8.GetBytes(input ?? ""));
@@ -28,6 +37,7 @@ namespace EasyGames.Web.Services
         {
             var hashOfInput = Hash(input);
             return hashOfInput.Equals(hash, StringComparison.OrdinalIgnoreCase);
+<<<<<<< HEAD
         }
     }
 }
@@ -39,3 +49,8 @@ namespace EasyGames.Web.Services
     }
 }
 >>>>>>> feature/akshata/data-shops
+=======
+        }
+    }
+}
+>>>>>>> origin/feature/hoang/pos-tier-email

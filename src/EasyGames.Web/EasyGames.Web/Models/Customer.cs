@@ -9,11 +9,15 @@ namespace EasyGames.Web.Models
         public string Email { get; set; } = "";
         public string Phone { get; set; } = "";
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> origin/feature/hoang/pos-tier-email
 
         // Link to AppUser for registered customers
         public int? AppUserId { get; set; }
         public AppUser? AppUser { get; set; }
 
+<<<<<<< HEAD
         public List<Order> Orders { get; set; } = new();
     }
 }
@@ -24,3 +28,8 @@ namespace EasyGames.Web.Models
 }
 
 >>>>>>> feature/akshata/data-shops
+=======
+        public List<Order> Orders { get; set; } = new();
+    }
+}
+>>>>>>> origin/feature/hoang/pos-tier-email

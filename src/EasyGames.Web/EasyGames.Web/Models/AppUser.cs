@@ -9,14 +9,18 @@
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
 >>>>>>> feature/akshata/data-shops
+=======
+>>>>>>> origin/feature/hoang/pos-tier-email
     public class AppUser
     {
         public int Id { get; set; }              // PK
         public string Name { get; set; } = "";   // display name
         public string Email { get; set; } = "";  // login username
+<<<<<<< HEAD
 <<<<<<< HEAD
         public string Phone { get; set; } = "";  // for customer order tracking
         public string PasswordHash { get; set; } = "";
@@ -34,3 +38,10 @@
 
 
 >>>>>>> feature/akshata/data-shops
+=======
+        public string Phone { get; set; } = "";  // for customer order tracking
+        public string PasswordHash { get; set; } = "";
+        public AppRole Role { get; set; }        // role per Area
+    }
+}
+>>>>>>> origin/feature/hoang/pos-tier-email
