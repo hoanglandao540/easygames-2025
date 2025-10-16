@@ -38,7 +38,7 @@ builder.Services.AddSession(o =>
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(opt =>
     {
-        opt.LoginPath = "/Account/Login";
+        opt.LoginPath = "/Account/LoginCustomer";
         opt.AccessDeniedPath = "/Account/Denied";
         opt.SlidingExpiration = true;
     });

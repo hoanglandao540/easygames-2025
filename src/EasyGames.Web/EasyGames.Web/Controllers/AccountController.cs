@@ -14,7 +14,7 @@ namespace EasyGames.Web.Controllers
         private readonly AppDbContext _db;
         public AccountController(AppDbContext db) { _db = db; }
 
-        // ======= PUBLIC REGISTER (Customer-only) =======
+        // ===== Register (Customer-only) =====
         [HttpGet, AllowAnonymous]
         public IActionResult Register() => View();
 
@@ -37,36 +37,36 @@ namespace EasyGames.Web.Controllers
                 Name = (name ?? "").Trim(),
                 Email = email.Trim(),
                 PasswordHash = Password.Hash(password),
-                Role = AppRole.Customer // 🔒 public sign-up => Customer
+                Role = AppRole.Customer // public sign-up => Customer
             };
             _db.AppUsers.Add(user);
             _db.SaveChanges();
             return RedirectToAction(nameof(LoginCustomer));
         }
 
-        // ======= ROLE-SPECIFIC LOGINS =======
+        // ===== Role-specific logins =====
         [HttpGet, AllowAnonymous]
         public IActionResult LoginOwner(string? returnUrl) { ViewBag.ReturnUrl = returnUrl; return View(); }
 
         [HttpPost, ValidateAntiForgeryToken, AllowAnonymous]
-        public async Task<IActionResult> LoginOwner(string email, string password, string? returnUrl)
-            => await DoLogin(email, password, AppRole.Owner, "/Owner/Dashboard", returnUrl, "This page is for Owner login.");
+        public Task<IActionResult> LoginOwner(string email, string password, string? returnUrl)
+            => DoLogin(email, password, AppRole.Owner, "/Owner/Dashboard", returnUrl, "This page is for Owner login.");
 
         [HttpGet, AllowAnonymous]
         public IActionResult LoginShop(string? returnUrl) { ViewBag.ReturnUrl = returnUrl; return View(); }
 
         [HttpPost, ValidateAntiForgeryToken, AllowAnonymous]
-        public async Task<IActionResult> LoginShop(string email, string password, string? returnUrl)
-            => await DoLogin(email, password, AppRole.Shop, "/Shop/Dashboard", returnUrl, "This page is for Shop Proprietor login.");
+        public Task<IActionResult> LoginShop(string email, string password, string? returnUrl)
+            => DoLogin(email, password, AppRole.Shop, "/Shop/Dashboard", returnUrl, "This page is for Shop Proprietor login.");
 
         [HttpGet, AllowAnonymous]
         public IActionResult LoginCustomer(string? returnUrl) { ViewBag.ReturnUrl = returnUrl; return View(); }
 
         [HttpPost, ValidateAntiForgeryToken, AllowAnonymous]
-        public async Task<IActionResult> LoginCustomer(string email, string password, string? returnUrl)
-            => await DoLogin(email, password, AppRole.Customer, "/Storefront/Dashboard", returnUrl, "This page is for Customer login.");
+        public Task<IActionResult> LoginCustomer(string email, string password, string? returnUrl)
+            => DoLogin(email, password, AppRole.Customer, "/Storefront/Dashboard", returnUrl, "This page is for Customer login.");
 
-        // ======= SHARED LOGIN CORE =======
+        // ===== Shared login core =====
         private async Task<IActionResult> DoLogin(string email, string password, AppRole requiredRole, string defaultLanding, string? returnUrl, string wrongRoleMsg)
         {
             var hash = Password.Hash(password ?? "");
@@ -98,27 +98,15 @@ namespace EasyGames.Web.Controllers
             if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
                 return LocalRedirect(returnUrl);
 
-            // redirect to dashboard by role
             return Redirect(defaultLanding);
         }
 
-        [Authorize]
-        public IActionResult Profile()
-        {
-            var idStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (!int.TryParse(idStr, out var uid)) return RedirectToAction("LoginCustomer");
-            var me = _db.AppUsers.FirstOrDefault(u => u.Id == uid);
-            if (me == null) return RedirectToAction("LoginCustomer");
-
-            return View(me);
-        }
-
-        // ======= LOGOUT =======
+        // ===== Logout (go straight to Guest page) =====
         [HttpPost, ValidateAntiForgeryToken, Authorize]
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync();
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Guest", "Home"); // <- always go to Guest page
         }
 
         [HttpGet, AllowAnonymous]

@@ -1,0 +1,59 @@
+﻿@model IEnumerable<EasyGames.Web.Models.OwnerStock>
+@{
+    ViewData["Title"] = "Shop → Transfer from Owner"; var shops = (IEnumerable<EasyGames.Web.Models.Shop>)ViewBag.Shops;
+}
+<h2 class="eg-h1 mb-3">Transfer from Owner Inventory</h2>
+@if (TempData["toast"] is string t)
+{
+    <div class="eg-card mb-3">@t</div>
+}
+
+<form method="post" asp-action="Pull" class="eg-card p-3 mb-3">
+    @Html.AntiForgeryToken()
+    <div class="row g-2 align-items-end">
+        <div class="col-md-3">
+            <label class="form-label">Shop</label>
+            <select name="shopId" class="form-select eg-input">
+                @foreach (var s in shops)
+                {
+                    <option value="@s.Id">@s.City (@s.ShopCode)</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Owner Stock</label>
+            <select name="ownerStockId" class="form-select eg-input">
+                @foreach (var o in Model)
+                {
+                    <option value="@o.Id">@o.Product?.Name — OwnerQty:@o.Qty</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Qty</label>
+            <input name="qty" class="form-control eg-input" value="1" />
+        </div>
+        <div class="col-md-2">
+            <button class="eg-btn" type="submit">Pull</button>
+        </div>
+    </div>
+</form>
+
+<div class="eg-card p-3">
+    <h5 class="mb-2">Owner Inventory Snapshot</h5>
+    <table class="table eg-table">
+        <thead><tr><th>Product</th><th class="text-end">OwnerQty</th><th>Source</th><th class="text-end">Buy</th><th class="text-end">Sell</th></tr></thead>
+        <tbody>
+            @foreach (var o in Model)
+            {
+                <tr>
+                    <td>@o.Product?.Name</td>
+                    <td class="text-end">@o.Qty</td>
+                    <td>@o.Source</td>
+                    <td class="text-end">@o.BuyPrice.ToString("0.00")</td>
+                    <td class="text-end">@o.SellPrice.ToString("0.00")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
