@@ -1,22 +1,42 @@
-﻿@model IEnumerable<EasyGames.Web.Areas.Shop.Controllers.ShopStockRow>
+﻿@model IEnumerable<EasyGames.Web.Models.ShopLocation>
 @{
-    ViewData["Title"] = "Shop Dashboard";
+    ViewData["Title"] = "Shops";
 }
-<h2 class="eg-h1 mb-3">Shop Dashboard</h2>
-<p class="eg-note">Quick stock snapshot (first 20 rows)</p>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="eg-h1 m-0">Shops</h2>
+    <a class="eg-btn" asp-action="Create">+ New Shop</a>
+</div>
 
-<table class="table eg-table">
-    <thead><tr><th>Shop</th><th>ProductId</th><th>Qty</th><th>Reorder</th></tr></thead>
+@if (TempData["toast"] is string t)
+{
+    <div class="eg-toast mb-3">@t</div>
+}
+
+<table class="table eg-table table-hover">
+    <thead>
+        <tr>
+            <th>Shop Code</th>
+            <th>City</th>
+            <th>Country</th>
+            <th>Phone</th>
+            <th>Proprietor</th>
+            <th></th>
+        </tr>
+    </thead>
     <tbody>
-        @foreach (var r in Model)
+        @foreach (var s in Model)
         {
             <tr>
-                <td>@r.ShopName</td>
-                <td>@r.ProductId</td>
-                <td>@r.Qty</td>
-                <td>@r.Reorder</td>
+                <td><strong>@s.ShopCode</strong></td>
+                <td>@s.City</td>
+                <td>@s.Country</td>
+                <td>@s.Phone</td>
+                <td>@(s.Proprietor?.Name ?? "(None)")</td>
+                <td class="text-end">
+                    <a asp-action="Edit" asp-route-id="@s.Id">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@s.Id">Delete</a>
+                </td>
             </tr>
         }
     </tbody>
 </table>
-

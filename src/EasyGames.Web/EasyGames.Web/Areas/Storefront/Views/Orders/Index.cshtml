@@ -1,0 +1,109 @@
+﻿@model IEnumerable<EasyGames.Web.Models.Order>
+@{
+    ViewData["Title"] = "My Orders";
+    var noPhone = (bool?)ViewBag.NoPhone ?? false;
+    var lifetime = (decimal?)ViewBag.LifetimeSpend ?? 0m;
+    var tier = (EasyGames.Web.Services.TierLevel?)ViewBag.CurrentTier;
+    var nextTier = (EasyGames.Web.Services.TierLevel?)ViewBag.NextTier;
+    var nextThreshold = (decimal?)ViewBag.NextThreshold ?? 0m;
+}
+
+<h2 class="eg-h1 mb-3">My Orders & Status</h2>
+
+@if (noPhone)
+{
+    <div class="eg-card p-3 mb-3">
+        <h5 class="text-warning">Phone Number Required</h5>
+        <p>Please update your profile with a phone number to view your order history and tier status.</p>
+        <a class="eg-btn eg-btn-sm" asp-controller="Account" asp-action="Profile">Update Profile</a>
+    </div>
+}
+else
+{
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="eg-card p-3">
+                <h6 class="text-secondary mb-1">Lifetime Spend</h6>
+                <div class="display-6 text-warning">${@lifetime.ToString("0.00")}</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="eg-card p-3">
+                <h6 class="text-secondary mb-1">Current Tier</h6>
+                <div class="display-6">
+                    @if (tier == EasyGames.Web.Services.TierLevel.Platinum)
+                    {
+                        <span class="badge bg-warning text-dark fs-4">Platinum</span>
+                    }
+                    else if (tier == EasyGames.Web.Services.TierLevel.Gold)
+                    {
+                        <span class="badge bg-warning fs-4">Gold</span>
+                    }
+                    else if (tier == EasyGames.Web.Services.TierLevel.Silver)
+                    {
+                        <span class="badge bg-secondary fs-4">Silver</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary fs-4">Bronze</span>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="eg-card p-3">
+                <h6 class="text-secondary mb-1">Next Tier</h6>
+                @if (tier == EasyGames.Web.Services.TierLevel.Platinum)
+                {
+                    <div class="small">You're at the top! 🎉</div>
+                }
+                else
+                {
+                    <div class="small">Spend $@nextThreshold.ToString("0.00") to reach <strong>@nextTier</strong></div>
+                }
+            </div>
+        </div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="eg-card p-3">
+            <p class="mb-0">No orders yet. Start shopping!</p>
+        </div>
+    }
+    else
+    {
+        <div class="eg-card p-3">
+            <h5 class="mb-3">Order History</h5>
+            <div class="table-responsive">
+                <table class="table eg-table">
+                    <thead>
+                        <tr>
+                            <th>Order #</th>
+                            <th>Date</th>
+                            <th>Shop</th>
+                            <th>Items</th>
+                            <th class="text-end">Total</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var o in Model)
+                        {
+                            <tr>
+                                <td><strong>#@o.Id</strong></td>
+                                <td>@o.CreatedUtc.ToString("MMM dd, yyyy")</td>
+                                <td>@(o.Shop?.City ?? "Online")</td>
+                                <td>@o.Lines.Sum(l => l.Qty) items</td>
+                                <td class="text-end">${@o.Total.ToString("0.00")}</td>
+                                <td class="text-end">
+                                    <a asp-action="Details" asp-route-id="@o.Id">View</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+}

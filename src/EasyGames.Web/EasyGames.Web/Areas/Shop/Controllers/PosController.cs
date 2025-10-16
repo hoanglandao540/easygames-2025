@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
 using EasyGames.Web.Data;
@@ -17,20 +16,17 @@ namespace EasyGames.Web.Areas.Shop.Controllers
     {
         private readonly AppDbContext _db;
         private readonly IPosCartService _pos;
-        private readonly IInventoryService _inv; // kept for other flows if you use it elsewhere
         private readonly ITierService _tier;
         private readonly IEmailService _email;
 
         public PosController(
             AppDbContext db,
             IPosCartService pos,
-            IInventoryService inv,
             ITierService tier,
             IEmailService email)
         {
             _db = db;
             _pos = pos;
-            _inv = inv;
             _tier = tier;
             _email = email;
         }
@@ -44,8 +40,7 @@ namespace EasyGames.Web.Areas.Shop.Controllers
         }
 
         // POST: /Shop/Pos/AddLine
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         public IActionResult AddLine(int productId, int qty = 1)
         {
             if (qty < 1) qty = 1;
@@ -62,60 +57,91 @@ namespace EasyGames.Web.Areas.Shop.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // qty controls
         public IActionResult Inc(int id) { _pos.Inc(id); return RedirectToAction(nameof(Index)); }
         public IActionResult Dec(int id) { _pos.Dec(id); return RedirectToAction(nameof(Index)); }
         public IActionResult Remove(int id) { _pos.Remove(id); return RedirectToAction(nameof(Index)); }
         public IActionResult Clear() { _pos.Clear(); return RedirectToAction(nameof(Index)); }
 
         // POST: /Shop/Pos/Pay
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Pay(int shopId, string customerName, string customerEmail, string customerPhone)
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> Pay(int shopId, string? customerName, string? customerEmail, string? customerPhone)
         {
             var cart = _pos.Get();
             if (cart is null || !cart.Rows.Any())
             {
                 TempData["toast"] = "No items to pay.";
-                return RedirectToAction(nameof(Index), new { shopId });
+                return RedirectToAction(nameof(Index));
             }
 
-            // Lookup or create customer by phone (guest allowed)
+            // Validate shop exists
+            var shop = await _db.Shops.FindAsync(shopId);
+            if (shop == null)
+            {
+                TempData["toast"] = "Invalid shop selected.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // FIX: Find or create Customer record with proper null handling
             Customer? cust = null;
+            AppUser? appUser = null;
+
             if (!string.IsNullOrWhiteSpace(customerPhone))
             {
                 var phone = customerPhone.Trim();
-                cust = await _db.Customers.FirstOrDefaultAsync(c => c.Phone == phone);
-                if (cust == null && (!string.IsNullOrWhiteSpace(customerName) || !string.IsNullOrWhiteSpace(customerEmail)))
+
+                // Check if registered user exists
+                appUser = await _db.AppUsers
+                    .FirstOrDefaultAsync(u => u.Phone == phone && u.Role == AppRole.Customer);
+
+                // Find or create Customer record
+                cust = await _db.Customers
+                    .Include(c => c.AppUser)
+                    .FirstOrDefaultAsync(c => c.Phone == phone);
+
+                if (cust == null)
                 {
-                    cust = new Customer { Name = customerName ?? "", Email = customerEmail ?? "", Phone = phone };
+                    cust = new Customer
+                    {
+                        Name = appUser?.Name ?? customerName ?? "Guest",
+                        Email = appUser?.Email ?? customerEmail ?? "",
+                        Phone = phone,
+                        AppUserId = appUser?.Id
+                    };
                     _db.Customers.Add(cust);
+                    await _db.SaveChangesAsync();
+                }
+                else if (appUser != null && cust.AppUserId == null)
+                {
+                    // Link existing Customer to AppUser
+                    cust.AppUserId = appUser.Id;
                     await _db.SaveChangesAsync();
                 }
             }
 
-            // Subtotal in-memory (avoid SQLite decimal SUM quirks)
+            // Calculate subtotal
             var subtotal = cart.Rows.AsEnumerable().Sum(r => r.Price * r.Qty);
 
-            // Tier discount (if known customer)
+            // Apply tier discount
             decimal discount = 0m;
             if (cust != null && !string.IsNullOrWhiteSpace(cust.Phone))
             {
-                var lifetime = _db.Orders.AsNoTracking()
+                var lifetime = await _db.Orders
                     .Where(o => o.CustomerPhone == cust.Phone)
-                    .AsEnumerable()
-                    .Select(o => o.Total)
-                    .DefaultIfEmpty(0m)
-                    .Sum();
+                    .SumAsync(o => (decimal?)o.Total) ?? 0m;
 
-                var tier = _tier.Evaluate(lifetime);
-                discount = tier switch
+                var tierLevel = _tier.Evaluate(lifetime);
+                discount = tierLevel switch
                 {
                     TierLevel.Silver => subtotal * 0.02m,
                     TierLevel.Gold => subtotal * 0.05m,
                     TierLevel.Platinum => subtotal * 0.08m,
                     _ => 0m
                 };
+
+                if (discount > 0)
+                {
+                    TempData["toast"] = $"{tierLevel} tier discount applied: {discount:0.00}";
+                }
             }
 
             var total = subtotal - discount;
@@ -126,16 +152,18 @@ namespace EasyGames.Web.Areas.Shop.Controllers
             {
                 ShopId = shopId,
                 CustomerId = cust?.Id,
-                CustomerPhone = cust?.Phone ?? (string.IsNullOrWhiteSpace(customerPhone) ? null : customerPhone.Trim()),
+                CustomerPhone = cust?.Phone ?? customerPhone?.Trim(),
                 Total = total,
                 CreatedUtc = DateTime.UtcNow
             };
             _db.Orders.Add(order);
-            await _db.SaveChangesAsync(); // get Order.Id
+            await _db.SaveChangesAsync();
 
-            // load all involved shop stocks in one query
+            // Load shop stocks for all products
             var productIds = cart.Rows.Select(r => r.ProductId).Distinct().ToList();
-            var stocks = await _db.ShopStocks.Where(s => s.ShopId == shopId && productIds.Contains(s.ProductId)).ToListAsync();
+            var stocks = await _db.ShopStocks
+                .Where(s => s.ShopId == shopId && productIds.Contains(s.ProductId))
+                .ToListAsync();
             var byPid = stocks.ToDictionary(s => s.ProductId, s => s);
 
             foreach (var r in cart.Rows)
@@ -151,14 +179,22 @@ namespace EasyGames.Web.Areas.Shop.Controllers
 
                 if (!byPid.TryGetValue(r.ProductId, out var srow))
                 {
-                    srow = new ShopStock { ShopId = shopId, ProductId = r.ProductId, Qty = 0, ReorderLevel = 3 };
+                    srow = new ShopStock
+                    {
+                        ShopId = shopId,
+                        ProductId = r.ProductId,
+                        Qty = 0,
+                        ReorderLevel = 3
+                    };
                     _db.ShopStocks.Add(srow);
                     byPid[r.ProductId] = srow;
                 }
 
-                var newQty = srow.Qty - r.Qty; // allow negative → warn only
+                var newQty = srow.Qty - r.Qty;
                 if (newQty <= srow.ReorderLevel)
-                    TempData["toast"] = $"Warning: {r.Name} low/negative (will be {newQty}). Sale allowed.";
+                {
+                    TempData["lowStock"] = $"Warning: {r.Name} is now low/negative ({newQty} remaining).";
+                }
 
                 srow.Qty = newQty;
             }
@@ -166,11 +202,11 @@ namespace EasyGames.Web.Areas.Shop.Controllers
             await _db.SaveChangesAsync();
             await tx.CommitAsync();
 
-            // optional receipt (kept simple)
+            // Send receipt
             if (!string.IsNullOrWhiteSpace(customerEmail))
             {
                 await _email.SendAsync(customerEmail, "POS Receipt",
-                    $"Thanks {customerName}! Order #{order.Id} total {order.Total:0.00}.");
+                    $"Thanks {customerName ?? "valued customer"}! Order #{order.Id} total: ${order.Total:0.00}.");
             }
 
             _pos.Clear();
@@ -184,5 +220,4 @@ namespace EasyGames.Web.Areas.Shop.Controllers
         }
     }
 }
-
 

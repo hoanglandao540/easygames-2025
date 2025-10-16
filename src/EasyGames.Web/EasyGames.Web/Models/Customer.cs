@@ -8,8 +8,11 @@ namespace EasyGames.Web.Models
         public string Name { get; set; } = "";
         public string Email { get; set; } = "";
         public string Phone { get; set; } = "";
-        // optional nav
+
+        // Link to AppUser for registered customers
+        public int? AppUserId { get; set; }
+        public AppUser? AppUser { get; set; }
+
         public List<Order> Orders { get; set; } = new();
     }
 }
-

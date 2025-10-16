@@ -1,31 +1,44 @@
-﻿@model EasyGames.Web.Models.Customer
+﻿@model EasyGames.Web.Models.AppUser
 @{
     ViewData["Title"] = "Edit User";
 }
-<section class="eg-card">
-    <h3 class="eg-h1 mb-3">Edit User</h3>
+<h2 class="eg-h1 mb-3">Edit User</h2>
 
-    <!-- student-style: hidden Id + fields -->
+<div class="eg-card p-3">
     <form asp-action="Edit" method="post">
+        @Html.AntiForgeryToken()
         <input type="hidden" asp-for="Id" />
 
-        <div class="mb-3">
-            <label class="form-label">Name</label>
-            <input class="form-control eg-input" asp-for="Name" />
-            <span class="text-warning" asp-validation-for="Name"></span>
+        <div class="mb-2">
+            <label>Name</label>
+            <input asp-for="Name" class="form-control eg-input" />
+        </div>
+
+        <div class="mb-2">
+            <label>Email</label>
+            <input asp-for="Email" type="email" class="form-control eg-input" />
+        </div>
+
+        <div class="mb-2">
+            <label>Phone</label>
+            <input asp-for="Phone" type="tel" class="form-control eg-input" />
+        </div>
+
+        <div class="mb-2">
+            <label>New Password (leave blank to keep current)</label>
+            <input name="newPassword" type="password" class="form-control eg-input" />
         </div>
 
         <div class="mb-3">
-            <label class="form-label">Email</label>
-            <input class="form-control eg-input" asp-for="Email" />
-            <span class="text-warning" asp-validation-for="Email"></span>
+            <label>Role</label>
+            <select asp-for="Role" class="form-select eg-input">
+                <option value="@EasyGames.Web.Models.AppRole.Customer">Customer</option>
+                <option value="@EasyGames.Web.Models.AppRole.Shop">Shop</option>
+                <option value="@EasyGames.Web.Models.AppRole.Owner">Owner</option>
+            </select>
         </div>
 
-        <button type="submit" class="eg-btn">Save</button>
-        <a asp-action="Index" class="btn btn-link text-warning">Cancel</a>
+        <button class="eg-btn" type="submit">Save</button>
+        <a class="btn btn-link text-warning" asp-action="Index">Back</a>
     </form>
-</section>
-
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
+</div>

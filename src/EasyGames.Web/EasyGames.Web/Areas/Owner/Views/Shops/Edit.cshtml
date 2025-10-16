@@ -1,0 +1,47 @@
+﻿@model EasyGames.Web.Models.ShopLocation
+@{
+    ViewData["Title"] = "Edit Shop";
+    var proprietors = (IEnumerable<EasyGames.Web.Models.AppUser>)ViewBag.Proprietors;
+}
+<h2 class="eg-h1 mb-3">Edit Shop</h2>
+
+<div class="eg-card p-3">
+    <form asp-action="Edit" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+
+        <div class="mb-2">
+            <label>Shop Code</label>
+            <input asp-for="ShopCode" class="form-control eg-input" />
+        </div>
+
+        <div class="mb-2">
+            <label>City</label>
+            <input asp-for="City" class="form-control eg-input" />
+        </div>
+
+        <div class="mb-2">
+            <label>Country</label>
+            <input asp-for="Country" class="form-control eg-input" />
+        </div>
+
+        <div class="mb-2">
+            <label>Phone</label>
+            <input asp-for="Phone" class="form-control eg-input" />
+        </div>
+
+        <div class="mb-3">
+            <label>Proprietor</label>
+            <select asp-for="ProprietorUserId" class="form-select eg-input">
+                <option value="">(None)</option>
+                @foreach (var p in proprietors)
+                {
+                    <option value="@p.Id">@p.Name (@p.Email)</option>
+                }
+            </select>
+        </div>
+
+        <button class="eg-btn" type="submit">Save</button>
+        <a class="btn btn-link text-warning" asp-action="Index">Back</a>
+    </form>
+</div>
