@@ -1,0 +1,20 @@
+﻿@{
+    ViewData["Title"] = "Owner Tools — Seed Inventory";
+}
+<h2 class="eg-h1 mb-3">Owner Tools — Seed Inventory</h2>
+
+@if (TempData["toast"] is string t)
+{
+    <div class="eg-card p-3 mb-3">@t</div>
+}
+
+<div class="eg-card p-3">
+    <p>This will create sample Owner inventory rows for the first 3 products (Source + Buy/Sell price). Use once.</p>
+    <form method="post" asp-action="SeedOwnerInventoryNow">
+        @Html.AntiForgeryToken()
+        <button class="eg-btn" type="submit">Seed Owner Inventory</button>
+    </form>
+</div>
+
+
+

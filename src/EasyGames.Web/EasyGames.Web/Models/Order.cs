@@ -1,14 +1,48 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EasyGames.Web.Models
 {
-    // order header
     public class Order
     {
-        public int Id { get; set; }
-        public string CustomerName { get; set; } = "";
-        public string CustomerEmail { get; set; } = "";
-        public decimal GrandTotal { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public int Id { get; set; }                 // PK
+
+        // where the sale happened
+        public int ShopId { get; set; }
+        public Shop? Shop { get; set; }
+
+        // who bought (nullable for guest sale)
+        public int? CustomerId { get; set; }
+        public Customer? Customer { get; set; }
+
+        // captured at POS (works for guest too)
+        public string? CustomerPhone { get; set; }
+
+        // canonical financials & time
+        public decimal Total { get; set; }         
+        public DateTime CreatedUtc { get; set; }
+
+        public List<OrderLine> Lines { get; set; } = new();
+
+        // These keep older code compiling (don’t touch DB schema).
+        [NotMapped] public string? CustomerName { get; set; }
+        [NotMapped] public string? CustomerEmail { get; set; }
+
+        [NotMapped]
+        public DateTime CreatedAt                
+        {
+            get => CreatedUtc;
+            set => CreatedUtc = value;
+        }
+
+        [NotMapped]
+        public decimal GrandTotal               
+        {
+            get => Total;
+            set => Total = value;
+        }
     }
 }
+
+

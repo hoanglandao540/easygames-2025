@@ -1,10 +1,11 @@
 ﻿@model int
 @{
-    ViewData["Title"] = "POS Success";
-    var tier = (EasyGames.Web.Services.TierLevel)ViewBag.Tier;
+    ViewData["Title"] = "Sale Complete";
 }
-<div class="eg-card">
-    <h3 class="eg-h1 mb-2">Payment successful</h3>
-    <p>Order <b>#@Model</b> saved. Customer tier: <b>@tier</b>.</p>
-    <a class="eg-btn" asp-action="Index">Start New Sale</a>
+<div class="eg-card p-4">
+    <h3 class="eg-h1 mb-2">Payment Successful</h3>
+    <p class="mb-3">Order #@Model has been recorded.</p>
+    <a class="eg-btn" asp-area="Shop" asp-controller="Pos" asp-action="Index">New Sale</a>
 </div>
+
+
