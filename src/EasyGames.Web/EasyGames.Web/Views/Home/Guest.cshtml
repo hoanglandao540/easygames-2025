@@ -13,7 +13,8 @@
             <div class="eg-card p-4 h-100">
                 <h4 class="mb-2">Owner (Admin)</h4>
                 <p class="mb-3">Manages products, shops, stock, and users. Sends updates to customers.</p>
-                <a class="eg-btn eg-btn-sm" asp-controller="Account" asp-action="Login">Admin Login</a>
+                <a class="eg-btn eg-btn-sm"
+                   asp-controller="Account" asp-action="LoginOwner">Admin Login</a>
             </div>
         </div>
 
@@ -21,7 +22,8 @@
             <div class="eg-card p-4 h-100">
                 <h4 class="mb-2">Shop Proprietor</h4>
                 <p class="mb-3">Runs the store: sells via POS and keeps stock healthy.</p>
-                <a class="eg-btn eg-btn-sm" asp-controller="Account" asp-action="Login">Shop Login</a>
+                <a class="eg-btn eg-btn-sm"
+                   asp-controller="Account" asp-action="LoginShop">Shop Login</a>
             </div>
         </div>
 
@@ -30,8 +32,10 @@
                 <h4 class="mb-2">Customer</h4>
                 <p class="mb-3">Browse, add to cart, and checkout. Track your orders and rewards.</p>
                 <div class="d-flex gap-2">
-                    <a class="eg-btn eg-btn-sm" asp-controller="Account" asp-action="Login">Customer Login</a>
-                    <a class="eg-btn eg-btn-sm" asp-controller="Account" asp-action="Register">Register</a>
+                    <a class="eg-btn eg-btn-sm"
+                       asp-controller="Account" asp-action="LoginCustomer">Customer Login</a>
+                    <a class="eg-btn eg-btn-sm"
+                       asp-controller="Account" asp-action="Register">Register</a>
                 </div>
             </div>
         </div>
@@ -40,7 +44,8 @@
             <div class="eg-card p-4 h-100">
                 <h4 class="mb-2">Guest Mode</h4>
                 <p class="mb-3">Just looking? Continue as guest to explore what we sell.</p>
-                <a class="eg-btn eg-btn-sm" asp-area="Storefront" asp-controller="Catalog" asp-action="Index">Browse Catalog</a>
+                <a class="eg-btn eg-btn-sm"
+                   asp-area="Storefront" asp-controller="Catalog" asp-action="Index">Browse Catalog</a>
             </div>
         </div>
     </div>
@@ -60,7 +65,8 @@
                     <li>Pre-orders & seasonal favourites</li>
                 </ul>
                 <div class="mt-3">
-                    <a class="eg-btn eg-btn-sm" asp-area="Storefront" asp-controller="Catalog" asp-action="Index">See Games</a>
+                    <a class="eg-btn eg-btn-sm"
+                       asp-area="Storefront" asp-controller="Catalog" asp-action="Index">See Games</a>
                 </div>
             </div>
         </div>
@@ -74,7 +80,8 @@
                     <li>Collectibles & gifts</li>
                 </ul>
                 <div class="mt-3">
-                    <a class="eg-btn eg-btn-sm" asp-area="Storefront" asp-controller="Catalog" asp-action="Index">See Toys</a>
+                    <a class="eg-btn eg-btn-sm"
+                       asp-area="Storefront" asp-controller="Catalog" asp-action="Index">See Toys</a>
                 </div>
             </div>
         </div>
@@ -88,7 +95,8 @@
                     <li>Study guides & activity books</li>
                 </ul>
                 <div class="mt-3">
-                    <a class="eg-btn eg-btn-sm" asp-area="Storefront" asp-controller="Catalog" asp-action="Index">See Books</a>
+                    <a class="eg-btn eg-btn-sm"
+                       asp-area="Storefront" asp-controller="Catalog" asp-action="Index">See Books</a>
                 </div>
             </div>
         </div>
