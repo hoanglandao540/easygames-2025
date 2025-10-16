@@ -27,7 +27,12 @@
 
             <nav class="d-flex align-items-center gap-3">
                 <a class="eg-nav" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                <a class="eg-nav" asp-area="Storefront" asp-controller="Catalog" asp-action="Index">Catalog</a>
+
+                @* HIDE Catalog for Shop operators (keep for everyone else) *@
+                @if (!isShop)
+                {
+                    <a class="eg-nav" asp-area="Storefront" asp-controller="Catalog" asp-action="Index">Catalog</a>
+                }
 
                 @if (isCustomer)
                 {
@@ -60,7 +65,6 @@
             <div class="d-flex align-items-center gap-2">
                 @if (isAuth)
                 {
-                    <!-- Profile removed: just show text -->
                     <span class="small text-secondary">@userName (@roleClaim)</span>
                     <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
                         @Html.AntiForgeryToken()
