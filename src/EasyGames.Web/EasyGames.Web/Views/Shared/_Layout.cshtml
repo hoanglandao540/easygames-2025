@@ -1,5 +1,14 @@
-﻿@{
+﻿@using System.Security.Claims
+@{
     var title = ViewData["Title"] as string ?? "EasyGames";
+
+    bool isAuth = User?.Identity?.IsAuthenticated ?? false;
+    bool isOwner = User?.IsInRole("Owner") ?? false;
+    bool isShop = User?.IsInRole("Shop") ?? false;
+    bool isCustomer = User?.IsInRole("Customer") ?? false;
+
+    string role = isAuth ? (User.FindFirst(ClaimTypes.Role)?.Value ?? "") : "";
+    string name = isAuth ? (User.Identity?.Name ?? "") : "";
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -11,28 +20,75 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     @RenderSection("Head", required: false)
 </head>
-<body class="eg-bg text-light">
+<body class="eg-bg text-light d-flex flex-column min-vh-100">
+    <!-- sticky layout -->
     <header class="eg-surface border-bottom eg-border shadow-sm">
         <div class="container py-3 d-flex align-items-center justify-content-between">
             <a class="navbar-brand text-warning fw-bold" asp-area="" asp-controller="Home" asp-action="Index">
                 EasyGames
             </a>
-            <nav class="d-flex gap-3">
+
+            <nav class="d-flex align-items-center gap-3">
                 <a class="eg-nav" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                <a class="eg-nav" asp-area="Owner" asp-controller="Products" asp-action="Index">Owner → Products</a>
-                <a class="eg-nav" asp-area="Owner" asp-controller="Users" asp-action="Index">Owner → Users</a>
-                <a class="eg-nav" asp-area="Owner" asp-controller="Shops" asp-action="Index">Owner → Shops</a>
+                <a class="eg-nav" asp-area="Storefront" asp-controller="Catalog" asp-action="Index">Catalog</a>
+
+                @* Customer-only extra links *@
+                @if (isCustomer)
+                {
+                    <a class="eg-nav" asp-area="Storefront" asp-controller="Cart" asp-action="Index">Cart</a>
+                    <a class="eg-nav" asp-area="Storefront" asp-controller="Checkout" asp-action="Index">Checkout</a>
+                }
+
+                @* Shop-only *@
+                @if (isShop)
+                {
+                    <a class="eg-nav" asp-area="Shop" asp-controller="Pos" asp-action="Index">Shop → POS</a>
+                }
+
+                @* Owner dropdown *@
+                @if (isOwner)
+                {
+                    <div class="dropdown">
+                        <a class="eg-nav dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Owner
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark">
+                            <li><a class="dropdown-item" asp-area="Owner" asp-controller="Products" asp-action="Index">Products</a></li>
+                            <li><a class="dropdown-item" asp-area="Owner" asp-controller="Users" asp-action="Index">Users</a></li>
+                            <li><a class="dropdown-item" asp-area="Owner" asp-controller="Shops" asp-action="Index">Shops</a></li>
+                            <li><a class="dropdown-item" asp-area="Owner" asp-controller="ShopStocks" asp-action="Index">Shop Stocks</a></li>
+                        </ul>
+                    </div>
+                }
             </nav>
+
+            <div class="d-flex align-items-center gap-2">
+                @if (isAuth)
+                {
+                    <span class="small text-secondary">@name (@role)</span>
+                    <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <button class="eg-btn eg-btn-sm" type="submit">Logout</button>
+                    </form>
+                }
+                else
+                {
+                    <a class="eg-nav" asp-controller="Account" asp-action="Login">Login</a>
+                    <a class="eg-nav" asp-controller="Account" asp-action="Register">Register</a>
+                }
+            </div>
         </div>
     </header>
 
-    <main class="container my-4">
+    <main class="container my-4 flex-grow-1">
+        <!-- pushes footer down -->
         @RenderBody()
     </main>
 
-    <footer class="eg-surface border-top eg-border">
+    <footer class="eg-surface border-top eg-border mt-auto">
+        <!-- sticks to bottom -->
         <div class="container py-3 text-secondary small">
-            Midnight+Gold • © @(DateTime.UtcNow.Year) EasyGames
+            Midnight+Gold • © @DateTime.UtcNow.Year EasyGames
         </div>
     </footer>
 
@@ -41,3 +97,5 @@
     @RenderSection("Scripts", required: false)
 </body>
 </html>
+
+
