@@ -1,6 +1,10 @@
 ﻿@model IEnumerable<EasyGames.Web.Models.OwnerStock>
 @{
+<<<<<<< HEAD
     ViewData["Title"] = "Shop → Transfer from Owner"; var shops = (IEnumerable<EasyGames.Web.Models.ShopLocation>)ViewBag.Shops;
+=======
+    ViewData["Title"] = "Shop → Transfer from Owner"; var shops = (IEnumerable<EasyGames.Web.Models.Shop>)ViewBag.Shops;
+>>>>>>> feature/akshata/data-shops
 }
 <h2 class="eg-h1 mb-3">Transfer from Owner Inventory</h2>
 @if (TempData["toast"] is string t)

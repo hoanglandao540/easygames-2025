@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿@model IEnumerable<EasyGames.Web.Models.ShopLocation>
 @{
     ViewData["Title"] = "Shops";
@@ -40,3 +41,27 @@
         }
     </tbody>
 </table>
+=======
+﻿@model IEnumerable<EasyGames.Web.Areas.Shop.Controllers.ShopStockRow>
+@{
+    ViewData["Title"] = "Shop Dashboard";
+}
+<h2 class="eg-h1 mb-3">Shop Dashboard</h2>
+<p class="eg-note">Quick stock snapshot (first 20 rows)</p>
+
+<table class="table eg-table">
+    <thead><tr><th>Shop</th><th>ProductId</th><th>Qty</th><th>Reorder</th></tr></thead>
+    <tbody>
+        @foreach (var r in Model)
+        {
+            <tr>
+                <td>@r.ShopName</td>
+                <td>@r.ProductId</td>
+                <td>@r.Qty</td>
+                <td>@r.Reorder</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+>>>>>>> feature/akshata/data-shops

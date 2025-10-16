@@ -28,7 +28,11 @@ namespace EasyGames.Web.Areas.Owner.Controllers
 
         // POST: /Owner/Users/Create
         [HttpPost, ValidateAntiForgeryToken]
+<<<<<<< HEAD
         public IActionResult Create(string name, string email, string password, string? phone, AppRole role)
+=======
+        public IActionResult Create(string name, string email, string password, AppRole role)
+>>>>>>> feature/akshata/data-shops
         {
             if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
             {
@@ -45,7 +49,10 @@ namespace EasyGames.Web.Areas.Owner.Controllers
             {
                 Name = (name ?? "").Trim(),
                 Email = email.Trim(),
+<<<<<<< HEAD
                 Phone = (phone ?? "").Trim(),
+=======
+>>>>>>> feature/akshata/data-shops
                 PasswordHash = Password.Hash(password),
                 Role = role
             };
@@ -55,6 +62,7 @@ namespace EasyGames.Web.Areas.Owner.Controllers
             TempData["toast"] = "User created.";
             return RedirectToAction(nameof(Index));
         }
+<<<<<<< HEAD
 
         // GET: /Owner/Users/Edit/5
         public IActionResult Edit(int id)
@@ -110,3 +118,7 @@ namespace EasyGames.Web.Areas.Owner.Controllers
         }
     }
 }
+=======
+    }
+}
+>>>>>>> feature/akshata/data-shops

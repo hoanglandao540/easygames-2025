@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿@model EasyGames.Web.Models.AppUser
 @{
     ViewData["Title"] = "Delete User";
@@ -22,3 +23,26 @@
         <a class="btn btn-link text-warning" asp-action="Index">Cancel</a>
     </form>
 </div>
+=======
+﻿@model EasyGames.Web.Models.Customer
+@{
+    ViewData["Title"] = "Delete User";
+}
+<section class="eg-card">
+    <h3 class="eg-h1 mb-3">Delete User</h3>
+
+    <!-- student-style: simple confirm -->
+    <p>Are you sure you want to delete this user?</p>
+    <ul class="mb-3">
+        <li><b>Id:</b> @Model.Id</li>
+        <li><b>Name:</b> @Model.Name</li>
+        <li><b>Email:</b> @Model.Email</li>
+    </ul>
+
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="eg-btn">Delete</button>
+        <a asp-action="Index" class="btn btn-link text-warning">Cancel</a>
+    </form>
+</section>
+>>>>>>> feature/akshata/data-shops

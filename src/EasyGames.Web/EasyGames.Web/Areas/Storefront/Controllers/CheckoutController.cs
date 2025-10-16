@@ -2,19 +2,32 @@
 using EasyGames.Web.Models;
 using EasyGames.Web.Services;
 using EasyGames.Web.ViewModels;
+<<<<<<< HEAD
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+=======
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+
+>>>>>>> feature/akshata/data-shops
 
 namespace EasyGames.Web.Areas.Storefront.Controllers
 {
     [Area("Storefront")]
+<<<<<<< HEAD
     [Authorize(Roles = nameof(AppRole.Customer))]
+=======
+
+    [Authorize(Roles = nameof(AppRole.Customer))]
+
+>>>>>>> feature/akshata/data-shops
     public class CheckoutController : Controller
     {
         private readonly AppDbContext _db;
         private readonly ICartService _cart;
+<<<<<<< HEAD
         private readonly ITierService _tier;
 
         public CheckoutController(AppDbContext db, ICartService cart, ITierService tier)
@@ -23,6 +36,9 @@ namespace EasyGames.Web.Areas.Storefront.Controllers
             _cart = cart;
             _tier = tier;
         }
+=======
+        public CheckoutController(AppDbContext db, ICartService cart) { _db = db; _cart = cart; }
+>>>>>>> feature/akshata/data-shops
 
         [HttpGet]
         public IActionResult Index()
@@ -32,6 +48,7 @@ namespace EasyGames.Web.Areas.Storefront.Controllers
         }
 
         [HttpPost, ValidateAntiForgeryToken]
+<<<<<<< HEAD
         public async Task<IActionResult> Index(CheckoutVM vm)
         {
             if (!ModelState.IsValid)
@@ -116,6 +133,25 @@ namespace EasyGames.Web.Areas.Storefront.Controllers
             await _db.SaveChangesAsync();
 
             // Add order lines
+=======
+        public IActionResult Index(CheckoutVM vm)
+        {
+            if (!ModelState.IsValid) { ViewBag.Cart = _cart.Get(); return View(vm); }
+
+            var cart = _cart.Get();
+            if (!cart.Rows.Any()) { TempData["msg"] = "Cart is empty."; return RedirectToAction("Index", "Catalog"); }
+
+            var order = new Order
+            {
+                CustomerName = vm.CustomerName,
+                CustomerEmail = vm.CustomerEmail,
+                CreatedAt = DateTime.UtcNow,
+                GrandTotal = cart.GrandTotal
+            };
+            _db.Orders.Add(order);
+            _db.SaveChanges();
+
+>>>>>>> feature/akshata/data-shops
             foreach (var r in cart.Rows)
             {
                 _db.OrderLines.Add(new OrderLine
@@ -127,7 +163,11 @@ namespace EasyGames.Web.Areas.Storefront.Controllers
                     Qty = r.Qty
                 });
             }
+<<<<<<< HEAD
             await _db.SaveChangesAsync();
+=======
+            _db.SaveChanges();
+>>>>>>> feature/akshata/data-shops
 
             _cart.Clear();
             return RedirectToAction(nameof(Success), new { id = order.Id });

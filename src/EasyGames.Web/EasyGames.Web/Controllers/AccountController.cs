@@ -6,7 +6,10 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+<<<<<<< HEAD
 using Microsoft.EntityFrameworkCore;
+=======
+>>>>>>> feature/akshata/data-shops
 
 namespace EasyGames.Web.Controllers
 {
@@ -20,7 +23,11 @@ namespace EasyGames.Web.Controllers
         public IActionResult Register() => View();
 
         [HttpPost, ValidateAntiForgeryToken, AllowAnonymous]
+<<<<<<< HEAD
         public IActionResult Register(string name, string email, string password, string? phone)
+=======
+        public IActionResult Register(string name, string email, string password)
+>>>>>>> feature/akshata/data-shops
         {
             if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
             {
@@ -37,6 +44,7 @@ namespace EasyGames.Web.Controllers
             {
                 Name = (name ?? "").Trim(),
                 Email = email.Trim(),
+<<<<<<< HEAD
                 Phone = (phone ?? "").Trim(),
                 PasswordHash = Password.Hash(password),
                 Role = AppRole.Customer
@@ -45,6 +53,13 @@ namespace EasyGames.Web.Controllers
             _db.SaveChanges();
 
             TempData["toast"] = "Account created! Please login.";
+=======
+                PasswordHash = Password.Hash(password),
+                Role = AppRole.Customer // public sign-up => Customer
+            };
+            _db.AppUsers.Add(user);
+            _db.SaveChanges();
+>>>>>>> feature/akshata/data-shops
             return RedirectToAction(nameof(LoginCustomer));
         }
 
@@ -74,7 +89,11 @@ namespace EasyGames.Web.Controllers
         private async Task<IActionResult> DoLogin(string email, string password, AppRole requiredRole, string defaultLanding, string? returnUrl, string wrongRoleMsg)
         {
             var hash = Password.Hash(password ?? "");
+<<<<<<< HEAD
             var user = await _db.AppUsers.FirstOrDefaultAsync(u => u.Email == email && u.PasswordHash == hash);
+=======
+            var user = _db.AppUsers.FirstOrDefault(u => u.Email == email && u.PasswordHash == hash);
+>>>>>>> feature/akshata/data-shops
 
             if (user == null)
             {
@@ -96,6 +115,7 @@ namespace EasyGames.Web.Controllers
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Role, user.Role.ToString())
             };
+<<<<<<< HEAD
 
             // Add phone claim for customers (needed for order history)
             if (!string.IsNullOrWhiteSpace(user.Phone))
@@ -103,6 +123,8 @@ namespace EasyGames.Web.Controllers
                 claims.Add(new Claim(ClaimTypes.MobilePhone, user.Phone));
             }
 
+=======
+>>>>>>> feature/akshata/data-shops
             var id = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
 
@@ -112,16 +134,25 @@ namespace EasyGames.Web.Controllers
             return Redirect(defaultLanding);
         }
 
+<<<<<<< HEAD
         // ===== Logout =====
+=======
+        // ===== Logout (go straight to Guest page) =====
+>>>>>>> feature/akshata/data-shops
         [HttpPost, ValidateAntiForgeryToken, Authorize]
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync();
+<<<<<<< HEAD
             return RedirectToAction("Guest", "Home");
+=======
+            return RedirectToAction("Guest", "Home"); // <- always go to Guest page
+>>>>>>> feature/akshata/data-shops
         }
 
         [HttpGet, AllowAnonymous]
         public IActionResult Denied() => View();
+<<<<<<< HEAD
 
         // ===== Profile =====
         [HttpGet, Authorize]
@@ -134,3 +165,9 @@ namespace EasyGames.Web.Controllers
         }
     }
 }
+=======
+    }
+}
+
+
+>>>>>>> feature/akshata/data-shops

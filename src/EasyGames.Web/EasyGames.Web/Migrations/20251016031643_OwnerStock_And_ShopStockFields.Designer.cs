@@ -3,6 +3,7 @@ using System;
 using EasyGames.Web.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EasyGames.Web.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251016031643_OwnerStock_And_ShopStockFields")]
+    partial class OwnerStock_And_ShopStockFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.21");
@@ -35,13 +38,6 @@ namespace EasyGames.Web.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-<<<<<<< HEAD
-                    b.Property<string>("Phone")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-=======
->>>>>>> feature/akshata/data-shops
                     b.Property<int>("Role")
                         .HasColumnType("INTEGER");
 
@@ -56,12 +52,6 @@ namespace EasyGames.Web.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-<<<<<<< HEAD
-                    b.Property<int?>("AppUserId")
-                        .HasColumnType("INTEGER");
-
-=======
->>>>>>> feature/akshata/data-shops
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -70,19 +60,8 @@ namespace EasyGames.Web.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-<<<<<<< HEAD
-                    b.Property<string>("Phone")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("AppUserId");
-
-=======
-                    b.HasKey("Id");
-
->>>>>>> feature/akshata/data-shops
                     b.ToTable("Customers");
                 });
 
@@ -92,21 +71,6 @@ namespace EasyGames.Web.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-<<<<<<< HEAD
-                    b.Property<DateTime>("CreatedUtc")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("CustomerId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("CustomerPhone")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("ShopId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<decimal>("Total")
-=======
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
@@ -119,18 +83,10 @@ namespace EasyGames.Web.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("GrandTotal")
->>>>>>> feature/akshata/data-shops
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-<<<<<<< HEAD
-                    b.HasIndex("CustomerId");
-
-                    b.HasIndex("ShopId");
-
-=======
->>>>>>> feature/akshata/data-shops
                     b.ToTable("Orders");
                 });
 
@@ -158,11 +114,6 @@ namespace EasyGames.Web.Migrations
 
                     b.HasKey("Id");
 
-<<<<<<< HEAD
-                    b.HasIndex("OrderId");
-
-=======
->>>>>>> feature/akshata/data-shops
                     b.ToTable("OrderLines");
                 });
 
@@ -217,11 +168,7 @@ namespace EasyGames.Web.Migrations
                     b.ToTable("Products");
                 });
 
-<<<<<<< HEAD
-            modelBuilder.Entity("EasyGames.Web.Models.ShopLocation", b =>
-=======
             modelBuilder.Entity("EasyGames.Web.Models.Shop", b =>
->>>>>>> feature/akshata/data-shops
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -239,26 +186,12 @@ namespace EasyGames.Web.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-<<<<<<< HEAD
-                    b.Property<int?>("ProprietorId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("ProprietorUserId")
-                        .HasColumnType("INTEGER");
-
-=======
->>>>>>> feature/akshata/data-shops
                     b.Property<string>("ShopCode")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-<<<<<<< HEAD
-                    b.HasIndex("ProprietorId");
-
-=======
->>>>>>> feature/akshata/data-shops
                     b.ToTable("Shops");
                 });
 
@@ -292,54 +225,9 @@ namespace EasyGames.Web.Migrations
 
                     b.HasKey("Id");
 
-<<<<<<< HEAD
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("ShopId");
-
                     b.ToTable("ShopStocks");
                 });
 
-            modelBuilder.Entity("EasyGames.Web.Models.Customer", b =>
-                {
-                    b.HasOne("EasyGames.Web.Models.AppUser", "AppUser")
-                        .WithMany()
-                        .HasForeignKey("AppUserId");
-
-                    b.Navigation("AppUser");
-                });
-
-            modelBuilder.Entity("EasyGames.Web.Models.Order", b =>
-                {
-                    b.HasOne("EasyGames.Web.Models.Customer", "Customer")
-                        .WithMany("Orders")
-                        .HasForeignKey("CustomerId");
-
-                    b.HasOne("EasyGames.Web.Models.ShopLocation", "Shop")
-                        .WithMany()
-                        .HasForeignKey("ShopId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Customer");
-
-                    b.Navigation("Shop");
-                });
-
-            modelBuilder.Entity("EasyGames.Web.Models.OrderLine", b =>
-                {
-                    b.HasOne("EasyGames.Web.Models.Order", null)
-                        .WithMany("Lines")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-=======
-                    b.ToTable("ShopStocks");
-                });
-
->>>>>>> feature/akshata/data-shops
             modelBuilder.Entity("EasyGames.Web.Models.OwnerStock", b =>
                 {
                     b.HasOne("EasyGames.Web.Models.Product", "Product")
@@ -350,47 +238,6 @@ namespace EasyGames.Web.Migrations
 
                     b.Navigation("Product");
                 });
-<<<<<<< HEAD
-
-            modelBuilder.Entity("EasyGames.Web.Models.ShopLocation", b =>
-                {
-                    b.HasOne("EasyGames.Web.Models.AppUser", "Proprietor")
-                        .WithMany()
-                        .HasForeignKey("ProprietorId");
-
-                    b.Navigation("Proprietor");
-                });
-
-            modelBuilder.Entity("EasyGames.Web.Models.ShopStock", b =>
-                {
-                    b.HasOne("EasyGames.Web.Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("EasyGames.Web.Models.ShopLocation", "Shop")
-                        .WithMany()
-                        .HasForeignKey("ShopId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-
-                    b.Navigation("Shop");
-                });
-
-            modelBuilder.Entity("EasyGames.Web.Models.Customer", b =>
-                {
-                    b.Navigation("Orders");
-                });
-
-            modelBuilder.Entity("EasyGames.Web.Models.Order", b =>
-                {
-                    b.Navigation("Lines");
-                });
-=======
->>>>>>> feature/akshata/data-shops
 #pragma warning restore 612, 618
         }
     }

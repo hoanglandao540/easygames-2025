@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 ﻿using System;
+=======
+﻿
+using System;
+>>>>>>> feature/akshata/data-shops
 using System.Linq;
 using System.Threading.Tasks;
 using EasyGames.Web.Data;
@@ -16,17 +21,29 @@ namespace EasyGames.Web.Areas.Shop.Controllers
     {
         private readonly AppDbContext _db;
         private readonly IPosCartService _pos;
+<<<<<<< HEAD
+=======
+        private readonly IInventoryService _inv; // kept for other flows if you use it elsewhere
+>>>>>>> feature/akshata/data-shops
         private readonly ITierService _tier;
         private readonly IEmailService _email;
 
         public PosController(
             AppDbContext db,
             IPosCartService pos,
+<<<<<<< HEAD
+=======
+            IInventoryService inv,
+>>>>>>> feature/akshata/data-shops
             ITierService tier,
             IEmailService email)
         {
             _db = db;
             _pos = pos;
+<<<<<<< HEAD
+=======
+            _inv = inv;
+>>>>>>> feature/akshata/data-shops
             _tier = tier;
             _email = email;
         }
@@ -40,7 +57,12 @@ namespace EasyGames.Web.Areas.Shop.Controllers
         }
 
         // POST: /Shop/Pos/AddLine
+<<<<<<< HEAD
         [HttpPost, ValidateAntiForgeryToken]
+=======
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+>>>>>>> feature/akshata/data-shops
         public IActionResult AddLine(int productId, int qty = 1)
         {
             if (qty < 1) qty = 1;
@@ -57,19 +79,30 @@ namespace EasyGames.Web.Areas.Shop.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+<<<<<<< HEAD
+=======
+        // qty controls
+>>>>>>> feature/akshata/data-shops
         public IActionResult Inc(int id) { _pos.Inc(id); return RedirectToAction(nameof(Index)); }
         public IActionResult Dec(int id) { _pos.Dec(id); return RedirectToAction(nameof(Index)); }
         public IActionResult Remove(int id) { _pos.Remove(id); return RedirectToAction(nameof(Index)); }
         public IActionResult Clear() { _pos.Clear(); return RedirectToAction(nameof(Index)); }
 
         // POST: /Shop/Pos/Pay
+<<<<<<< HEAD
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Pay(int shopId, string? customerName, string? customerEmail, string? customerPhone)
+=======
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Pay(int shopId, string customerName, string customerEmail, string customerPhone)
+>>>>>>> feature/akshata/data-shops
         {
             var cart = _pos.Get();
             if (cart is null || !cart.Rows.Any())
             {
                 TempData["toast"] = "No items to pay.";
+<<<<<<< HEAD
                 return RedirectToAction(nameof(Index));
             }
 
@@ -131,17 +164,55 @@ namespace EasyGames.Web.Areas.Shop.Controllers
 
                 var tierLevel = _tier.Evaluate(lifetime);
                 discount = tierLevel switch
+=======
+                return RedirectToAction(nameof(Index), new { shopId });
+            }
+
+            // Lookup or create customer by phone (guest allowed)
+            Customer? cust = null;
+            if (!string.IsNullOrWhiteSpace(customerPhone))
+            {
+                var phone = customerPhone.Trim();
+                cust = await _db.Customers.FirstOrDefaultAsync(c => c.Phone == phone);
+                if (cust == null && (!string.IsNullOrWhiteSpace(customerName) || !string.IsNullOrWhiteSpace(customerEmail)))
+                {
+                    cust = new Customer { Name = customerName ?? "", Email = customerEmail ?? "", Phone = phone };
+                    _db.Customers.Add(cust);
+                    await _db.SaveChangesAsync();
+                }
+            }
+
+            // Subtotal in-memory (avoid SQLite decimal SUM quirks)
+            var subtotal = cart.Rows.AsEnumerable().Sum(r => r.Price * r.Qty);
+
+            // Tier discount (if known customer)
+            decimal discount = 0m;
+            if (cust != null && !string.IsNullOrWhiteSpace(cust.Phone))
+            {
+                var lifetime = _db.Orders.AsNoTracking()
+                    .Where(o => o.CustomerPhone == cust.Phone)
+                    .AsEnumerable()
+                    .Select(o => o.Total)
+                    .DefaultIfEmpty(0m)
+                    .Sum();
+
+                var tier = _tier.Evaluate(lifetime);
+                discount = tier switch
+>>>>>>> feature/akshata/data-shops
                 {
                     TierLevel.Silver => subtotal * 0.02m,
                     TierLevel.Gold => subtotal * 0.05m,
                     TierLevel.Platinum => subtotal * 0.08m,
                     _ => 0m
                 };
+<<<<<<< HEAD
 
                 if (discount > 0)
                 {
                     TempData["toast"] = $"{tierLevel} tier discount applied: {discount:0.00}";
                 }
+=======
+>>>>>>> feature/akshata/data-shops
             }
 
             var total = subtotal - discount;
@@ -152,11 +223,16 @@ namespace EasyGames.Web.Areas.Shop.Controllers
             {
                 ShopId = shopId,
                 CustomerId = cust?.Id,
+<<<<<<< HEAD
                 CustomerPhone = cust?.Phone ?? customerPhone?.Trim(),
+=======
+                CustomerPhone = cust?.Phone ?? (string.IsNullOrWhiteSpace(customerPhone) ? null : customerPhone.Trim()),
+>>>>>>> feature/akshata/data-shops
                 Total = total,
                 CreatedUtc = DateTime.UtcNow
             };
             _db.Orders.Add(order);
+<<<<<<< HEAD
             await _db.SaveChangesAsync();
 
             // Load shop stocks for all products
@@ -164,6 +240,13 @@ namespace EasyGames.Web.Areas.Shop.Controllers
             var stocks = await _db.ShopStocks
                 .Where(s => s.ShopId == shopId && productIds.Contains(s.ProductId))
                 .ToListAsync();
+=======
+            await _db.SaveChangesAsync(); // get Order.Id
+
+            // load all involved shop stocks in one query
+            var productIds = cart.Rows.Select(r => r.ProductId).Distinct().ToList();
+            var stocks = await _db.ShopStocks.Where(s => s.ShopId == shopId && productIds.Contains(s.ProductId)).ToListAsync();
+>>>>>>> feature/akshata/data-shops
             var byPid = stocks.ToDictionary(s => s.ProductId, s => s);
 
             foreach (var r in cart.Rows)
@@ -179,6 +262,7 @@ namespace EasyGames.Web.Areas.Shop.Controllers
 
                 if (!byPid.TryGetValue(r.ProductId, out var srow))
                 {
+<<<<<<< HEAD
                     srow = new ShopStock
                     {
                         ShopId = shopId,
@@ -186,15 +270,24 @@ namespace EasyGames.Web.Areas.Shop.Controllers
                         Qty = 0,
                         ReorderLevel = 3
                     };
+=======
+                    srow = new ShopStock { ShopId = shopId, ProductId = r.ProductId, Qty = 0, ReorderLevel = 3 };
+>>>>>>> feature/akshata/data-shops
                     _db.ShopStocks.Add(srow);
                     byPid[r.ProductId] = srow;
                 }
 
+<<<<<<< HEAD
                 var newQty = srow.Qty - r.Qty;
                 if (newQty <= srow.ReorderLevel)
                 {
                     TempData["lowStock"] = $"Warning: {r.Name} is now low/negative ({newQty} remaining).";
                 }
+=======
+                var newQty = srow.Qty - r.Qty; // allow negative → warn only
+                if (newQty <= srow.ReorderLevel)
+                    TempData["toast"] = $"Warning: {r.Name} low/negative (will be {newQty}). Sale allowed.";
+>>>>>>> feature/akshata/data-shops
 
                 srow.Qty = newQty;
             }
@@ -202,11 +295,19 @@ namespace EasyGames.Web.Areas.Shop.Controllers
             await _db.SaveChangesAsync();
             await tx.CommitAsync();
 
+<<<<<<< HEAD
             // Send receipt
             if (!string.IsNullOrWhiteSpace(customerEmail))
             {
                 await _email.SendAsync(customerEmail, "POS Receipt",
                     $"Thanks {customerName ?? "valued customer"}! Order #{order.Id} total: ${order.Total:0.00}.");
+=======
+            // optional receipt (kept simple)
+            if (!string.IsNullOrWhiteSpace(customerEmail))
+            {
+                await _email.SendAsync(customerEmail, "POS Receipt",
+                    $"Thanks {customerName}! Order #{order.Id} total {order.Total:0.00}.");
+>>>>>>> feature/akshata/data-shops
             }
 
             _pos.Clear();
@@ -221,3 +322,7 @@ namespace EasyGames.Web.Areas.Shop.Controllers
     }
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> feature/akshata/data-shops

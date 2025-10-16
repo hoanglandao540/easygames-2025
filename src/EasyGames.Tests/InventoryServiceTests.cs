@@ -25,7 +25,11 @@ namespace EasyGames.Tests
 
             // seed minimal data
             var p = new Product { Code = "EG-TEST", Name = "Test Item", Price = 9.99m };
+<<<<<<< HEAD
             var s = new ShopLocation { ShopCode = "DRW-01", City = "Darwin", Country = "AU", Phone = "+61" };
+=======
+            var s = new Shop { ShopCode = "DRW-01", City = "Darwin", Country = "AU", Phone = "+61" };
+>>>>>>> feature/akshata/data-shops
             db.Products.Add(p);
             db.Shops.Add(s);
             db.SaveChanges();

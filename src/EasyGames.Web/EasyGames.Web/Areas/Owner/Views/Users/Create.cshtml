@@ -1,6 +1,10 @@
 ﻿@using EasyGames.Web.Models
 @{
+<<<<<<< HEAD
     ViewData["Title"] = "Create User";
+=======
+    ViewData["Title"] = "Create User (Admin)";
+>>>>>>> feature/akshata/data-shops
 }
 <h2 class="eg-h1 mb-3">Create User</h2>
 @if (TempData["toast"] is string t)
@@ -19,6 +23,7 @@
 
         <div class="mb-2">
             <label>Email</label>
+<<<<<<< HEAD
             <input name="email" type="email" class="form-control eg-input" />
         </div>
 
@@ -26,6 +31,9 @@
             <label>Phone</label>
             <input name="phone" type="tel" class="form-control eg-input" />
             <div class="form-text text-secondary">Required for Customer role (order tracking)</div>
+=======
+            <input name="email" class="form-control eg-input" />
+>>>>>>> feature/akshata/data-shops
         </div>
 
         <div class="mb-2">
@@ -45,4 +53,8 @@
         <button class="eg-btn" type="submit">Save</button>
         <a class="btn btn-link text-warning" asp-action="Index">Back</a>
     </form>
+<<<<<<< HEAD
 </div>
+=======
+</div>
+>>>>>>> feature/akshata/data-shops
