@@ -8,11 +8,10 @@ var builder = WebApplication.CreateBuilder(args);
 // 1) MVC + runtime compilation
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
-// 2) ONE SQLite DbContext registration (no duplicates!)
+// 2) SQLite DbContext
 var contentRoot = builder.Environment.ContentRootPath;
 var dbPath = Path.Combine(contentRoot, "data", "easygames.db");
 
-// FIX: Add error handling for directory creation
 try
 {
     var dbDir = Path.GetDirectoryName(dbPath);
@@ -56,7 +55,6 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     });
 builder.Services.AddAuthorization();
 
-// ===== BUILD =====
 var app = builder.Build();
 
 // 6) Prod safety
@@ -74,19 +72,39 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseSession();
 
-// 8) Auto-migrate & seed
+// 8) FIXED: Safe database initialization
 using (var scope = app.Services.CreateScope())
 {
     try
     {
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        db.Database.Migrate();
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+
+        // Use EnsureCreated for simple scenarios (creates DB if not exists, does nothing if exists)
+        // This won't conflict with existing tables
+        if (db.Database.EnsureCreated())
+        {
+            logger.LogInformation("Database created successfully.");
+        }
+        else
+        {
+            logger.LogInformation("Database already exists.");
+        }
+
+        // Seed data (DbSeeder.Seed should check if data exists before inserting)
         DbSeeder.Seed(db);
+        logger.LogInformation("Database seeding completed.");
     }
     catch (Exception ex)
     {
         var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred during database migration and seeding");
+        logger.LogError(ex, "An error occurred during database initialization");
+
+        if (app.Environment.IsDevelopment())
+        {
+            logger.LogError("💡 TIP: Delete the database file at {DbPath} and restart", dbPath);
+        }
+
         throw;
     }
 }

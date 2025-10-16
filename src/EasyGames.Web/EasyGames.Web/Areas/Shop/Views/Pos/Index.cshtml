@@ -3,102 +3,125 @@
 @model EasyGames.Web.ViewModels.PosCartVM
 
 @{
-    ViewData["Title"] = "Shop → POS";
+    ViewData["Title"] = "Point of Sale";
     var products = (IEnumerable<Product>)ViewBag.Products;
     var shops = (IEnumerable<EasyGames.Web.Models.ShopLocation>)ViewBag.Shops;
 }
 
-<h2 class="eg-h1 mb-3">Point of Sale</h2>
+<h2 class="eg-h1 mb-4">Point of Sale System</h2>
 
 @if (TempData["toast"] is string toast)
 {
-    <div class="eg-card p-3 mb-3">@toast</div>
+    <div class="eg-toast mb-3">@toast</div>
+}
+
+@if (TempData["lowStock"] is string lowStock)
+{
+    <div class="alert alert-warning">
+        <strong>⚠️ Low Stock Alert:</strong> @lowStock
+    </div>
 }
 
 <div class="row g-4">
-    <!-- LEFT: add line + customer info + pay -->
     <div class="col-lg-5">
-        <div class="eg-card p-3 mb-3">
-            <h5 class="mb-3">1) Choose Shop</h5>
-            <!-- This select will be submitted with Pay -->
+        <div class="eg-card p-4 mb-3">
+            <h5 class="mb-3">1️⃣ Select Shop Location</h5>
             <select id="shopId" class="form-select eg-input">
                 @foreach (var s in shops)
                 {
                     <option value="@s.Id">@s.City (@s.ShopCode)</option>
                 }
             </select>
+            <div class="form-text text-secondary mt-2">Choose the shop where this sale is happening</div>
         </div>
 
-        <div class="eg-card p-3 mb-3">
-            <h5 class="mb-3">2) Add Product</h5>
-            <form asp-area="Shop" asp-controller="Pos" asp-action="AddLine" method="post" class="row g-2">
+        <div class="eg-card p-4 mb-3">
+            <h5 class="mb-3">2️⃣ Add Products to Sale</h5>
+            <form asp-area="Shop" asp-controller="Pos" asp-action="AddLine" method="post">
                 @Html.AntiForgeryToken()
-                <div class="col-8">
-                    <select name="productId" class="form-select eg-input">
-                        @foreach (var p in products)
-                        {
-                            <option value="@p.Id">@p.Name (@p.Price.ToString("0.00"))</option>
-                        }
-                    </select>
-                </div>
-                <div class="col-4 d-flex gap-2">
-                    <input name="qty" type="number" min="1" value="1" class="form-control eg-input text-end" />
-                    <button class="eg-btn" type="submit">Add</button>
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label class="form-label">Product</label>
+                        <select name="productId" class="form-select eg-input">
+                            @foreach (var p in products)
+                            {
+                                <option value="@p.Id">@p.Name - $@p.Price.ToString("0.00")</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label">Quantity</label>
+                        <input name="qty" type="number" min="1" value="1" class="form-control eg-input" />
+                    </div>
+                    <div class="col-6 d-flex align-items-end">
+                        <button class="eg-btn w-100" type="submit">Add to Sale</button>
+                    </div>
                 </div>
             </form>
-            <div class="form-text mt-2">Tip: add multiple products, then set customer details and Pay.</div>
+            <div class="form-text text-secondary mt-2">Add multiple products before processing payment</div>
         </div>
 
-        <div class="eg-card p-3">
-            <h5 class="mb-3">3) Customer (for receipt & tier)</h5>
-            <!-- This form only submits on Pay -->
+        <div class="eg-card p-4">
+            <h5 class="mb-3">3️⃣ Customer Details & Payment</h5>
             <form id="payForm" asp-area="Shop" asp-controller="Pos" asp-action="Pay" method="post">
                 @Html.AntiForgeryToken()
-                <!-- shopId gets copied from the picker on Pay click -->
                 <input type="hidden" name="shopId" id="payShopId" value="" />
 
-                <div class="mb-2">
+                <div class="mb-3">
                     <label class="form-label">Customer Name</label>
-                    <input name="customerName" class="form-control eg-input" />
+                    <input name="customerName" class="form-control eg-input" placeholder="Optional" />
                 </div>
-                <div class="mb-2">
+                <div class="mb-3">
                     <label class="form-label">Customer Email</label>
-                    <input name="customerEmail" type="email" class="form-control eg-input" />
+                    <input name="customerEmail" type="email" class="form-control eg-input" placeholder="For receipt" />
                 </div>
-                <div class="mb-2">
-                    <label class="form-label">Customer Phone</label>
-                    <input name="customerPhone" class="form-control eg-input" />
-                    <div class="form-text">Used to find repeat customers and apply tier discounts.</div>
+                <div class="mb-3">
+                    <label class="form-label">Customer Phone <span class="text-warning">*</span></label>
+                    <input name="customerPhone" class="form-control eg-input" placeholder="Required for tier discount" />
+                    <div class="form-text text-secondary">
+                        Phone number links to customer account for discounts & order history
+                    </div>
                 </div>
 
-                <button class="eg-btn w-100 mt-2" type="submit" id="payBtn">Pay</button>
+                <div class="d-grid gap-2">
+                    <button class="eg-btn" type="submit" id="payBtn">
+                        💳 Process Payment
+                    </button>
+                    <small class="text-secondary text-center">All sales are NO CASH (card/digital only)</small>
+                </div>
             </form>
         </div>
     </div>
 
-    <!-- RIGHT: cart -->
     <div class="col-lg-7">
-        <div class="eg-card p-3">
-            <div class="d-flex align-items-center mb-2">
-                <h5 class="mb-0">Cart</h5>
-                <div class="ms-auto">
-                    <a class="eg-btn eg-btn-sm" asp-area="Shop" asp-controller="Pos" asp-action="Clear">Clear</a>
-                </div>
+        <div class="eg-card p-4">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <h5 class="mb-0">Current Sale Items</h5>
+                @if (Model != null && Model.Rows.Any())
+                {
+                    <a class="btn btn-sm btn-outline-danger" asp-area="Shop" asp-controller="Pos" asp-action="Clear"
+                       onclick="return confirm('Clear all items from this sale?');">
+                        Clear All
+                    </a>
+                }
             </div>
 
             @if (Model == null || Model.Rows.Count == 0)
             {
-                <div class="text-secondary">No items yet.</div>
+                <div class="text-center py-5 text-secondary">
+                    <div class="fs-1 mb-3">🛒</div>
+                    <p class="mb-0">No items in current sale. Add products to begin.</p>
+                </div>
             }
             else
             {
                 <div class="table-responsive">
-                    <table class="table eg-table align-middle">
+                    <table class="table eg-table mb-0">
                         <thead>
                             <tr>
                                 <th>Product</th>
                                 <th class="text-end">Price</th>
-                                <th class="text-center" style="width:220px;">Qty</th>
+                                <th class="text-center" style="min-width: 180px;">Quantity</th>
                                 <th class="text-end">Line Total</th>
                                 <th></th>
                             </tr>
@@ -107,23 +130,26 @@
                             @foreach (var r in Model.Rows)
                             {
                                 <tr>
-                                    <td>@r.Name</td>
-                                    <td class="text-end">@r.Price.ToString("0.00")</td>
-                                    <td class="text-center">
-                                        <div class="btn-group" role="group">
-                                            <!-- NOTE: PosCartRowVM uses ProductId, not Id -->
-                                            <a class="btn btn-sm eg-btn eg-qty-btn"
+                                    <td class="align-middle">@r.Name</td>
+                                    <td class="text-end align-middle">$@r.Price.ToString("0.00")</td>
+                                    <td class="text-center align-middle">
+                                        <div class="d-inline-flex align-items-center gap-2">
+                                            <a class="eg-qty-btn"
                                                asp-area="Shop" asp-controller="Pos" asp-action="Dec"
-                                               asp-route-id="@r.ProductId">−</a>
-                                            <span class="px-3">@r.Qty</span>
-                                            <a class="btn btn-sm eg-btn eg-qty-btn"
+                                               asp-route-id="@r.ProductId"
+                                               title="Decrease">−</a>
+                                            <span class="eg-qty-display">@r.Qty</span>
+                                            <a class="eg-qty-btn"
                                                asp-area="Shop" asp-controller="Pos" asp-action="Inc"
-                                               asp-route-id="@r.ProductId">+</a>
+                                               asp-route-id="@r.ProductId"
+                                               title="Increase">+</a>
                                         </div>
                                     </td>
-                                    <td class="text-end">@((r.Price * r.Qty).ToString("0.00"))</td>
-                                    <td class="text-end">
-                                        <a class="btn btn-sm btn-outline-warning"
+                                    <td class="text-end align-middle">
+                                        <strong class="text-warning">$@((r.Price * r.Qty).ToString("0.00"))</strong>
+                                    </td>
+                                    <td class="text-end align-middle">
+                                        <a class="btn btn-sm btn-outline-danger"
                                            asp-area="Shop" asp-controller="Pos" asp-action="Remove"
                                            asp-route-id="@r.ProductId">Remove</a>
                                     </td>
@@ -131,9 +157,11 @@
                             }
                         </tbody>
                         <tfoot>
-                            <tr>
-                                <th colspan="3" class="text-end">Subtotal</th>
-                                <th class="text-end">@Model.GrandTotal.ToString("0.00")</th>
+                            <tr class="border-top border-warning">
+                                <th colspan="3" class="text-end align-middle">Subtotal:</th>
+                                <th class="text-end align-middle">
+                                    <span class="display-6 text-warning">$@Model.GrandTotal.ToString("0.00")</span>
+                                </th>
                                 <th></th>
                             </tr>
                         </tfoot>
@@ -146,13 +174,13 @@
 
 @section Scripts {
     <script>
-        // copy selected shopId into the Pay form right before submit
         (function () {
             const payBtn = document.getElementById('payBtn');
             const payShopId = document.getElementById('payShopId');
             const shopPick = document.getElementById('shopId');
+
             if (payBtn && payShopId && shopPick) {
-                payBtn.addEventListener('click', function () {
+                payBtn.addEventListener('click', function (e) {
                     payShopId.value = shopPick.value || "";
                 });
             }

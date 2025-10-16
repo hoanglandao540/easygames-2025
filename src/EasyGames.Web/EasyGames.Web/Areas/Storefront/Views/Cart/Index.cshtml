@@ -1,70 +1,118 @@
 ﻿@model EasyGames.Web.ViewModels.CartVM
 @{
     ViewData["Title"] = "Cart";
-    var backToCart = Context.Request.Path + Context.Request.QueryString; // pass as returnUrl
+    var backToCart = Context.Request.Path + Context.Request.QueryString;
 }
-<h2 class="eg-h1 mb-3">Cart</h2>
+<h2 class="eg-h1 mb-4">Shopping Cart</h2>
+
+@if (TempData["toast"] is string toast)
+{
+    <div class="eg-toast mb-3">@toast</div>
+}
 
 @if (!Model.Rows.Any())
 {
-    <div class="eg-card">Your cart is empty.</div>
+    <div class="eg-card p-4 text-center">
+        <h5 class="mb-3">Your cart is empty</h5>
+        <p class="text-secondary mb-3">Browse our catalog and add items to get started!</p>
+        <a class="eg-btn" asp-area="Storefront" asp-controller="Catalog" asp-action="Index">
+            Browse Catalog
+        </a>
+    </div>
 }
 else
 {
-    <table class="table eg-table table-hover">
-        <thead>
-            <tr>
-                <th>Product</th>
-                <th class="text-end">Price</th>
-                <th class="text-center">Qty</th>
-                <th class="text-end">Line Total</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var r in Model.Rows)
-            {
-                <tr>
-                    <td>@r.Name</td>
-                    <td class="text-end">@r.Price.ToString("0.00")</td>
-                    <td class="text-center">
-                        <a class="eg-btn eg-qty-btn"
-                           asp-area="Storefront" asp-controller="Cart" asp-action="Dec"
-                           asp-route-id="@r.ProductId"
-                           asp-route-returnUrl="@backToCart">
-                            &minus;
-                        </a>
-                        <span class="mx-2">@r.Qty</span>
-                        <a class="eg-btn eg-qty-btn"
-                           asp-area="Storefront" asp-controller="Cart" asp-action="Inc"
-                           asp-route-id="@r.ProductId"
-                           asp-route-returnUrl="@backToCart">
-                            +
-                        </a>
-                    </td>
-                    <td class="text-end">@r.LineTotal.ToString("0.00")</td>
-                    <td class="text-end">
-                        <a asp-area="Storefront" asp-controller="Cart" asp-action="Remove"
-                           asp-route-id="@r.ProductId" asp-route-returnUrl="@backToCart">
-                            Remove
-                        </a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-        <tfoot>
-            <tr>
-                <th colspan="3" class="text-end">Grand Total</th>
-                <th class="text-end">@Model.GrandTotal.ToString("0.00")</th>
-                <th></th>
-            </tr>
-        </tfoot>
-    </table>
+    <div class="eg-card p-0 mb-4">
+        <div class="table-responsive">
+            <table class="table eg-table mb-0">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th class="text-end">Price</th>
+                        <th class="text-center" style="min-width: 200px;">Quantity</th>
+                        <th class="text-end">Line Total</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var r in Model.Rows)
+                    {
+                        <tr>
+                            <td class="align-middle">
+                                <strong>@r.Name</strong>
+                            </td>
+                            <td class="text-end align-middle">
+                                $@r.Price.ToString("0.00")
+                            </td>
+                            <td class="text-center align-middle">
+                                <div class="d-inline-flex align-items-center justify-content-center gap-3">
+                                    <a class="eg-qty-btn"
+                                       asp-area="Storefront"
+                                       asp-controller="Cart"
+                                       asp-action="Dec"
+                                       asp-route-id="@r.ProductId"
+                                       asp-route-returnUrl="@backToCart"
+                                       title="Decrease quantity">
+                                        <span class="eg-qty-btntxt"> -</span>
+                                    </a>
+                                    <span class="eg-qty-display fw-bold">@r.Qty</span>
+                                    <a class="eg-qty-btn"
+                                       asp-area="Storefront"
+                                       asp-controller="Cart"
+                                       asp-action="Inc"
+                                       asp-route-id="@r.ProductId"
+                                       asp-route-returnUrl="@backToCart"
+                                       title="Increase quantity">
+                                        <span class="eg-qty-btntxt"> +</span>
+                                    </a>
+                                </div>
+                            </td>
+                            <td class="text-end align-middle">
+                                <strong class="text-warning">$@r.LineTotal.ToString("0.00")</strong>
+                            </td>
+                            <td class="text-end align-middle">
+                                <a class="btn btn-sm btn-outline-danger"
+                                   asp-area="Storefront"
+                                   asp-controller="Cart"
+                                   asp-action="Remove"
+                                   asp-route-id="@r.ProductId"
+                                   asp-route-returnUrl="@backToCart">
+                                    Remove
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr class="border-top border-warning">
+                        <th colspan="3" class="text-end align-middle">Grand Total:</th>
+                        <th class="text-end align-middle">
+                            <span class="display-6 text-warning">$@Model.GrandTotal.ToString("0.00")</span>
+                        </th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
 
-    <div class="d-flex gap-2">
-        <a class="eg-btn" asp-area="Storefront" asp-controller="Checkout" asp-action="Index">Checkout</a>
+    <div class="d-flex gap-3 flex-wrap">
+        <a class="eg-btn" asp-area="Storefront" asp-controller="Checkout" asp-action="Index">
+            Proceed to Checkout
+        </a>
         <a class="eg-btn eg-btn-sm"
-           asp-area="Storefront" asp-controller="Cart" asp-action="Clear"
-           asp-route-returnUrl="@backToCart">Clear Cart</a>
+           asp-area="Storefront"
+           asp-controller="Catalog"
+           asp-action="Index">
+            Continue Shopping
+        </a>
+        <a class="btn btn-outline-warning eg-btn-sm"
+           asp-area="Storefront"
+           asp-controller="Cart"
+           asp-action="Clear"
+           asp-route-returnUrl="@backToCart"
+           onclick="return confirm('Clear all items from cart?');">
+            Clear Cart
+        </a>
     </div>
 }
