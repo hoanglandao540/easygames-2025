@@ -16,5 +16,8 @@ namespace EasyGames.Web.Data
         public DbSet<OrderLine> OrderLines => Set<OrderLine>();
         public DbSet<AppUser> AppUsers => Set<AppUser>();
 
+        public DbSet<OwnerStock> OwnerStocks => Set<OwnerStock>();
+
+
     }
 }

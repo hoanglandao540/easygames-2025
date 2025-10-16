@@ -1,0 +1,24 @@
+﻿@model EasyGames.Web.Models.OwnerStock
+@{
+    ViewData["Title"] = "New Owner Stock"; var products = (IEnumerable<EasyGames.Web.Models.Product>)ViewBag.Products;
+}
+<h2 class="eg-h1 mb-3">New Owner Stock</h2>
+<div class="eg-card p-3">
+    <form asp-action="Create" method="post">
+        @Html.AntiForgeryToken()
+        <div class="mb-2">
+            <label>Product</label>
+            <select asp-for="ProductId" class="form-select eg-input">
+                @foreach (var p in products)
+                {
+                    <option value="@p.Id">@p.Name</option>
+                }
+            </select>
+        </div>
+        <div class="mb-2"><label>Qty</label><input asp-for="Qty" class="form-control eg-input" /></div>
+        <div class="mb-2"><label>Source</label><input asp-for="Source" class="form-control eg-input" /></div>
+        <div class="mb-2"><label>Buy Price</label><input asp-for="BuyPrice" class="form-control eg-input" /></div>
+        <div class="mb-3"><label>Sell Price</label><input asp-for="SellPrice" class="form-control eg-input" /></div>
+        <button class="eg-btn">Save</button>
+    </form>
+</div>
