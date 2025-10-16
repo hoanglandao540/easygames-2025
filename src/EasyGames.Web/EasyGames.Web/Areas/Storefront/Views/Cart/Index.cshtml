@@ -28,14 +28,14 @@ else
                     <td>@r.Name</td>
                     <td class="text-end">@r.Price.ToString("0.00")</td>
                     <td class="text-center">
-                        <a class="eg-btn eg-btn-sm"
+                        <a class="eg-btn eg-qty-btn"
                            asp-area="Storefront" asp-controller="Cart" asp-action="Dec"
                            asp-route-id="@r.ProductId"
                            asp-route-returnUrl="@backToCart">
                             &minus;
                         </a>
                         <span class="mx-2">@r.Qty</span>
-                        <a class="eg-btn eg-btn-sm"
+                        <a class="eg-btn eg-qty-btn"
                            asp-area="Storefront" asp-controller="Cart" asp-action="Inc"
                            asp-route-id="@r.ProductId"
                            asp-route-returnUrl="@backToCart">

@@ -160,3 +160,17 @@ a {
 .container .eg-table {
     width: 100%;
 }
+
+
+.eg-qty-btn {
+    background-color: var(--eg-gold);
+    color: #111 !important;
+    border: 1px solid var(--eg-gold2);
+}
+
+    .eg-qty-btn:hover, .eg-qty-btn:focus {
+        filter: brightness(0.92);
+        color: #000 !important;
+    }
+
+

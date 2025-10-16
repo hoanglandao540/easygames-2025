@@ -1,0 +1,17 @@
+﻿@{
+    ViewData["Title"] = "Owner Login"; var returnUrl = (string?)ViewBag.ReturnUrl;
+}
+<h2 class="eg-h1 mb-3">Owner Login</h2>
+@if (TempData["toast"] is string t)
+{
+    <div class="eg-toast">@t</div>
+}
+<div class="eg-card p-3">
+    <form asp-action="LoginOwner" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="returnUrl" value="@returnUrl" />
+        <div class="mb-2"><label>Email</label><input name="email" class="form-control eg-input" /></div>
+        <div class="mb-3"><label>Password</label><input name="password" type="password" class="form-control eg-input" /></div>
+        <button class="eg-btn" type="submit">Login</button>
+    </form>
+</div>

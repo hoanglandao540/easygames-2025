@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace EasyGames.Web.Areas.Storefront.Controllers
 {
     [Area("Storefront")]
+
     [Authorize(Roles = nameof(AppRole.Customer))]
 
     public class CheckoutController : Controller

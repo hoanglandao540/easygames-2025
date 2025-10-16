@@ -1,0 +1,28 @@
+﻿@{
+    ViewData["Title"] = "My Dashboard";
+}
+<h2 class="eg-h1 mb-3">Welcome back!</h2>
+
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="eg-card p-3 h-100">
+            <h5>Shop now</h5>
+            <p>Browse Games, Toys & Books.</p>
+            <a class="eg-btn eg-btn-sm" asp-area="Storefront" asp-controller="Catalog" asp-action="Index">Open Catalog</a>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="eg-card p-3 h-100">
+            <h5>My Cart</h5>
+            <p>Review items in your cart.</p>
+            <a class="eg-btn eg-btn-sm" asp-area="Storefront" asp-controller="Cart" asp-action="Index">Go to Cart</a>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="eg-card p-3 h-100">
+            <h5>Checkout</h5>
+            <p>Complete your purchase.</p>
+            <a class="eg-btn eg-btn-sm" asp-area="Storefront" asp-controller="Checkout" asp-action="Index">Checkout</a>
+        </div>
+    </div>
+</div>
