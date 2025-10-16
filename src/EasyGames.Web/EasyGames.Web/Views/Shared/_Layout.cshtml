@@ -23,18 +23,16 @@
 <body class="eg-bg text-light d-flex flex-column min-vh-100">
     <header class="eg-surface border-bottom eg-border shadow-sm">
         <div class="container py-3 d-flex align-items-center justify-content-between">
-            <!-- Brand goes to Index, which already routes to Guest/role landing -->
             <a class="navbar-brand text-warning fw-bold" asp-area="" asp-controller="Home" asp-action="Index">EasyGames</a>
 
             <nav class="d-flex align-items-center gap-3">
-                @* Customer: only the shopping actions we know are implemented *@
                 @if (isCustomer)
                 {
+                    <a class="eg-nav" asp-area="Storefront" asp-controller="Catalog" asp-action="Index">Catalog</a>
                     <a class="eg-nav" asp-area="Storefront" asp-controller="Cart" asp-action="Index">Cart</a>
-                    <a class="eg-nav" asp-area="Storefront" asp-controller="Checkout" asp-action="Index">Checkout</a>
+                    <a class="eg-nav" asp-area="Storefront" asp-controller="Orders" asp-action="Index">My Orders</a>
                 }
 
-                @* Shop operator: show tested/functional pages with simple labels *@
                 @if (isShop)
                 {
                     <a class="eg-nav" asp-area="Shop" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
@@ -43,17 +41,20 @@
                     <a class="eg-nav" asp-area="Shop" asp-controller="Transfer" asp-action="Index">Transfer</a>
                 }
 
-                @* Owner admin menu (keep the functional pages) *@
                 @if (isOwner)
                 {
                     <div class="dropdown">
                         <a class="eg-nav dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Owner</a>
                         <ul class="dropdown-menu dropdown-menu-dark">
                             <li><a class="dropdown-item" asp-area="Owner" asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
+                            <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" asp-area="Owner" asp-controller="Products" asp-action="Index">Products</a></li>
-                            <li><a class="dropdown-item" asp-area="Owner" asp-controller="Users" asp-action="Index">Users</a></li>
+                            <li><a class="dropdown-item" asp-area="Owner" asp-controller="OwnerStocks" asp-action="Index">Owner Inventory</a></li>
                             <li><a class="dropdown-item" asp-area="Owner" asp-controller="Shops" asp-action="Index">Shops</a></li>
                             <li><a class="dropdown-item" asp-area="Owner" asp-controller="ShopStocks" asp-action="Index">Shop Stocks</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" asp-area="Owner" asp-controller="Users" asp-action="Index">Users</a></li>
+                            <li><a class="dropdown-item" asp-area="Owner" asp-controller="Email" asp-action="Index">Send Emails</a></li>
                         </ul>
                     </div>
                 }
@@ -99,5 +100,3 @@
     @RenderSection("Scripts", required: false)
 </body>
 </html>
-
-

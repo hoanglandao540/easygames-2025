@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EasyGames.Web.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251016031643_OwnerStock_And_ShopStockFields")]
-    partial class OwnerStock_And_ShopStockFields
+    [Migration("20251016130708_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -38,6 +38,10 @@ namespace EasyGames.Web.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("Role")
                         .HasColumnType("INTEGER");
 
@@ -52,6 +56,9 @@ namespace EasyGames.Web.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("AppUserId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -60,7 +67,13 @@ namespace EasyGames.Web.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
 
                     b.ToTable("Customers");
                 });
@@ -71,21 +84,26 @@ namespace EasyGames.Web.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTime>("CreatedUtc")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("CustomerEmail")
-                        .IsRequired()
+                    b.Property<int?>("CustomerId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("CustomerPhone")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("CustomerName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("ShopId")
+                        .HasColumnType("INTEGER");
 
-                    b.Property<decimal>("GrandTotal")
+                    b.Property<decimal>("Total")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("ShopId");
 
                     b.ToTable("Orders");
                 });
@@ -113,6 +131,8 @@ namespace EasyGames.Web.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
 
                     b.ToTable("OrderLines");
                 });
@@ -168,7 +188,7 @@ namespace EasyGames.Web.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("EasyGames.Web.Models.Shop", b =>
+            modelBuilder.Entity("EasyGames.Web.Models.ShopLocation", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -186,11 +206,19 @@ namespace EasyGames.Web.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int?>("ProprietorId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("ProprietorUserId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("ShopCode")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ProprietorId");
 
                     b.ToTable("Shops");
                 });
@@ -225,7 +253,46 @@ namespace EasyGames.Web.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("ShopId");
+
                     b.ToTable("ShopStocks");
+                });
+
+            modelBuilder.Entity("EasyGames.Web.Models.Customer", b =>
+                {
+                    b.HasOne("EasyGames.Web.Models.AppUser", "AppUser")
+                        .WithMany()
+                        .HasForeignKey("AppUserId");
+
+                    b.Navigation("AppUser");
+                });
+
+            modelBuilder.Entity("EasyGames.Web.Models.Order", b =>
+                {
+                    b.HasOne("EasyGames.Web.Models.Customer", "Customer")
+                        .WithMany("Orders")
+                        .HasForeignKey("CustomerId");
+
+                    b.HasOne("EasyGames.Web.Models.ShopLocation", "Shop")
+                        .WithMany()
+                        .HasForeignKey("ShopId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Shop");
+                });
+
+            modelBuilder.Entity("EasyGames.Web.Models.OrderLine", b =>
+                {
+                    b.HasOne("EasyGames.Web.Models.Order", null)
+                        .WithMany("Lines")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("EasyGames.Web.Models.OwnerStock", b =>
@@ -237,6 +304,44 @@ namespace EasyGames.Web.Migrations
                         .IsRequired();
 
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("EasyGames.Web.Models.ShopLocation", b =>
+                {
+                    b.HasOne("EasyGames.Web.Models.AppUser", "Proprietor")
+                        .WithMany()
+                        .HasForeignKey("ProprietorId");
+
+                    b.Navigation("Proprietor");
+                });
+
+            modelBuilder.Entity("EasyGames.Web.Models.ShopStock", b =>
+                {
+                    b.HasOne("EasyGames.Web.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EasyGames.Web.Models.ShopLocation", "Shop")
+                        .WithMany()
+                        .HasForeignKey("ShopId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Shop");
+                });
+
+            modelBuilder.Entity("EasyGames.Web.Models.Customer", b =>
+                {
+                    b.Navigation("Orders");
+                });
+
+            modelBuilder.Entity("EasyGames.Web.Models.Order", b =>
+                {
+                    b.Navigation("Lines");
                 });
 #pragma warning restore 612, 618
         }

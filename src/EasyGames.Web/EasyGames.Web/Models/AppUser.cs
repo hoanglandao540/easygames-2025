@@ -8,18 +8,13 @@
         Customer = 2
     }
 
-
     public class AppUser
     {
         public int Id { get; set; }              // PK
         public string Name { get; set; } = "";   // display name
         public string Email { get; set; } = "";  // login username
-        public string PasswordHash { get; set; } = ""; 
+        public string Phone { get; set; } = "";  // for customer order tracking
+        public string PasswordHash { get; set; } = "";
         public AppRole Role { get; set; }        // role per Area
     }
 }
-
-
-
-
-

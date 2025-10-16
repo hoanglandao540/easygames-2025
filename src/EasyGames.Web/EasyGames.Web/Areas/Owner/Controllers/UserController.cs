@@ -28,7 +28,7 @@ namespace EasyGames.Web.Areas.Owner.Controllers
 
         // POST: /Owner/Users/Create
         [HttpPost, ValidateAntiForgeryToken]
-        public IActionResult Create(string name, string email, string password, AppRole role)
+        public IActionResult Create(string name, string email, string password, string? phone, AppRole role)
         {
             if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
             {
@@ -45,6 +45,7 @@ namespace EasyGames.Web.Areas.Owner.Controllers
             {
                 Name = (name ?? "").Trim(),
                 Email = email.Trim(),
+                Phone = (phone ?? "").Trim(),
                 PasswordHash = Password.Hash(password),
                 Role = role
             };
@@ -52,6 +53,59 @@ namespace EasyGames.Web.Areas.Owner.Controllers
             _db.SaveChanges();
 
             TempData["toast"] = "User created.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        // GET: /Owner/Users/Edit/5
+        public IActionResult Edit(int id)
+        {
+            var m = _db.AppUsers.Find(id);
+            if (m == null) return NotFound();
+            return View(m);
+        }
+
+        // POST: /Owner/Users/Edit/5
+        [HttpPost, ValidateAntiForgeryToken]
+        public IActionResult Edit(AppUser m, string? newPassword)
+        {
+            if (!ModelState.IsValid) return View(m);
+
+            var existing = _db.AppUsers.Find(m.Id);
+            if (existing == null) return NotFound();
+
+            existing.Name = m.Name;
+            existing.Email = m.Email;
+            existing.Phone = m.Phone;
+            existing.Role = m.Role;
+
+            if (!string.IsNullOrWhiteSpace(newPassword))
+            {
+                existing.PasswordHash = Password.Hash(newPassword);
+            }
+
+            _db.SaveChanges();
+            TempData["toast"] = "User updated.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        // GET: /Owner/Users/Delete/5
+        public IActionResult Delete(int id)
+        {
+            var m = _db.AppUsers.Find(id);
+            if (m == null) return NotFound();
+            return View(m);
+        }
+
+        // POST: /Owner/Users/Delete/5
+        [HttpPost, ActionName("Delete"), ValidateAntiForgeryToken]
+        public IActionResult DeleteConfirmed(int id)
+        {
+            var m = _db.AppUsers.Find(id);
+            if (m == null) return NotFound();
+
+            _db.AppUsers.Remove(m);
+            _db.SaveChanges();
+            TempData["toast"] = "User deleted.";
             return RedirectToAction(nameof(Index));
         }
     }

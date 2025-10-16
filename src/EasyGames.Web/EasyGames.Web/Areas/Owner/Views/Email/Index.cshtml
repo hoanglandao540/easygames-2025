@@ -1,0 +1,74 @@
+﻿@{
+    ViewData["Title"] = "Send Group Emails";
+}
+<h2 class="eg-h1 mb-3">Send Group Emails</h2>
+
+@if (TempData["toast"] is string t)
+{
+    <div class="eg-toast mb-3">@t</div>
+}
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="eg-card p-3">
+            <h5 class="mb-3">Send to Tier</h5>
+            <form asp-action="SendToTier" method="post">
+                @Html.AntiForgeryToken()
+
+                <div class="mb-2">
+                    <label>Target Tier</label>
+                    <select name="tier" class="form-select eg-input">
+                        <option value="Bronze">Bronze</option>
+                        <option value="Silver">Silver</option>
+                        <option value="Gold">Gold</option>
+                        <option value="Platinum">Platinum</option>
+                        <option value="All">All Tiers</option>
+                    </select>
+                </div>
+
+                <div class="mb-2">
+                    <label>Subject</label>
+                    <input name="subject" class="form-control eg-input" placeholder="e.g., Special Offer for Gold Members" />
+                </div>
+
+                <div class="mb-3">
+                    <label>Message Body</label>
+                    <textarea name="body" rows="6" class="form-control eg-input" placeholder="Your message here..."></textarea>
+                </div>
+
+                <button class="eg-btn" type="submit">Send to Tier</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="eg-card p-3">
+            <h5 class="mb-3">Send to All Customers</h5>
+            <form asp-action="SendToAll" method="post">
+                @Html.AntiForgeryToken()
+
+                <div class="mb-2">
+                    <label>Subject</label>
+                    <input name="subject" class="form-control eg-input" placeholder="e.g., New Products Available" />
+                </div>
+
+                <div class="mb-3">
+                    <label>Message Body</label>
+                    <textarea name="body" rows="6" class="form-control eg-input" placeholder="Your message here..."></textarea>
+                </div>
+
+                <button class="eg-btn" type="submit">Send to All</button>
+            </form>
+        </div>
+
+        <div class="eg-card p-3 mt-3">
+            <h6 class="mb-2">Tier Thresholds</h6>
+            <ul class="mb-0 small text-secondary">
+                <li>Bronze: $0+</li>
+                <li>Silver: $200+</li>
+                <li>Gold: $500+</li>
+                <li>Platinum: $1,000+</li>
+            </ul>
+        </div>
+    </div>
+</div>

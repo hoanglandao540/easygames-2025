@@ -1,18 +1,17 @@
-﻿// student-style: make PMC/CLI use the SAME SQLite file as runtime
+﻿using System.IO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using System.IO;
 
 namespace EasyGames.Web.Data
 {
+    // Explicit design-time factory so EF Tools stop guessing/duplicating
     public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
     {
         public AppDbContext CreateDbContext(string[] args)
         {
-            // Resolve <web project>\data\easygames.db
-            var projectDir = Directory.GetCurrentDirectory();
-            var dbPath = Path.Combine(projectDir, "data", "easygames.db");
-            Directory.CreateDirectory(Path.GetDirectoryName(dbPath)!);
+            var contentRoot = Directory.GetCurrentDirectory();
+            // point to the SAME db path you use at runtime
+            var dbPath = Path.Combine(contentRoot, "data", "easygames.db");
 
             var options = new DbContextOptionsBuilder<AppDbContext>()
                 .UseSqlite($"Data Source={dbPath}")

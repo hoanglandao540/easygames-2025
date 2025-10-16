@@ -1,0 +1,26 @@
+﻿@model EasyGames.Web.Models.ShopLocation
+@{
+    ViewData["Title"] = "Delete Shop";
+}
+<h2 class="eg-h1 mb-3">Delete Shop</h2>
+
+<div class="eg-card p-3">
+    <p>Are you sure you want to delete this shop?</p>
+    <dl class="row">
+        <dt class="col-sm-3">Shop Code</dt>
+        <dd class="col-sm-9">@Model.ShopCode</dd>
+        <dt class="col-sm-3">City</dt>
+        <dd class="col-sm-9">@Model.City</dd>
+        <dt class="col-sm-3">Country</dt>
+        <dd class="col-sm-9">@Model.Country</dd>
+        <dt class="col-sm-3">Proprietor</dt>
+        <dd class="col-sm-9">@(Model.Proprietor?.Name ?? "(None)")</dd>
+    </dl>
+
+    <form asp-action="Delete" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <button class="eg-btn" type="submit">Delete</button>
+        <a class="btn btn-link text-warning" asp-action="Index">Cancel</a>
+    </form>
+</div>
