@@ -1,0 +1,17 @@
+﻿@model EasyGames.Web.Areas.Owner.Controllers.OwnerDashVM
+@{
+	ViewData["Title"] = "Owner Dashboard";
+}
+<h2 class="eg-h1 mb-3">Owner Dashboard</h2>
+
+<div class="row g-4">
+	<div class="col-md-3"><div class="eg-card p-3"><h5>Products</h5><div class="display-6">@Model.ProductCount</div></div></div>
+	<div class="col-md-3"><div class="eg-card p-3"><h5>Shops</h5><div class="display-6">@Model.ShopCount</div></div></div>
+	<div class="col-md-3"><div class="eg-card p-3"><h5>Users</h5><div class="display-6">@Model.UserCount</div></div></div>
+	<div class="col-md-3"><div class="eg-card p-3"><h5>Total Stock Qty</h5><div class="display-6">@Model.TotalStockQty</div></div></div>
+</div>
+
+<div class="eg-card p-3 mt-4">
+	<h5 class="mb-2">Low-stock alerts</h5>
+	<p class="mb-0">@Model.LowStockItems item(s) at/below reorder level.</p>
+</div>
