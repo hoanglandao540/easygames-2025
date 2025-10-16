@@ -112,11 +112,19 @@ namespace EasyGames.Web.Controllers
             return Redirect(defaultLanding);
         }
 
-        // ===== Logout =====
+        // ===== FIXED LOGOUT - Clears session and redirects to Guest =====
         [HttpPost, ValidateAntiForgeryToken, Authorize]
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync();
+            // Clear session data
+            HttpContext.Session.Clear();
+
+            // Sign out from cookie authentication
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            TempData["toast"] = "You have been logged out successfully.";
+
+            // Redirect to Guest landing page
             return RedirectToAction("Guest", "Home");
         }
 
