@@ -1,0 +1,54 @@
+﻿@model IEnumerable<EasyGames.Web.Models.ShopStock>
+@{
+    ViewData["Title"] = "Shop → Stock"; var shops = (IEnumerable<EasyGames.Web.Models.Shop>)ViewBag.Shops; int? shopId = (int?)ViewBag.ShopId;
+}
+
+<h2 class="eg-h1 mb-3">Shop Stock</h2>
+
+<form method="get" class="mb-3">
+    <div class="row g-2 align-items-end">
+        <div class="col-md-4">
+            <label class="form-label">Shop</label>
+            <select name="shopId" class="form-select eg-input">
+                <option value="">(All)</option>
+                @foreach (var s in shops)
+                {
+                    <option value="@s.Id" selected="@(shopId == s.Id)">
+                        @s.City (@s.ShopCode)
+                    </option>
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button class="eg-btn" type="submit">Filter</button>
+        </div>
+    </div>
+</form>
+
+<table class="table eg-table">
+    <thead>
+        <tr>
+            <th>Shop</th>
+            <th>Product</th>
+            <th>Source</th>
+            <th class="text-end">Buy</th>
+            <th class="text-end">Sell</th>
+            <th class="text-end">Qty</th>
+            <th class="text-end">Reorder</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var s in Model)
+        {
+            <tr>
+                <td>@s.Shop?.City (@s.Shop?.ShopCode)</td>
+                <td>@s.Product?.Name</td>
+                <td>@s.Source</td>
+                <td class="text-end">@s.BuyPrice.ToString("0.00")</td>
+                <td class="text-end">@s.SellPrice.ToString("0.00")</td>
+                <td class="text-end">@s.Qty</td>
+                <td class="text-end">@s.ReorderLevel</td>
+            </tr>
+        }
+    </tbody>
+</table>

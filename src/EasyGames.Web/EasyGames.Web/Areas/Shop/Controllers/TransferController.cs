@@ -13,6 +13,7 @@ namespace EasyGames.Web.Areas.Shop.Controllers
         private readonly AppDbContext _db;
         public TransferController(AppDbContext db) { _db = db; }
 
+        // Shows owner inventory + select a shop to pull into
         public IActionResult Index()
         {
             var owner = _db.OwnerStocks.Include(o => o.Product)
@@ -27,12 +28,12 @@ namespace EasyGames.Web.Areas.Shop.Controllers
             if (qty < 1) qty = 1;
             var os = _db.OwnerStocks.Include(o => o.Product).FirstOrDefault(o => o.Id == ownerStockId);
             if (os == null) { TempData["toast"] = "Owner stock not found."; return RedirectToAction(nameof(Index)); }
-            if (os.Qty < qty) { TempData["toast"] = $"Owner has only {os.Qty}."; return RedirectToAction(nameof(Index)); }
+            if (os.Qty < qty) { TempData["toast"] = $"Owner has only {os.Qty} units."; return RedirectToAction(nameof(Index)); }
 
             // reduce owner stock
             os.Qty -= qty;
 
-            // find or create ShopStock
+            // find/create shop stock
             var ss = _db.ShopStocks.FirstOrDefault(s => s.ShopId == shopId && s.ProductId == os.ProductId);
             if (ss == null)
             {
@@ -41,10 +42,7 @@ namespace EasyGames.Web.Areas.Shop.Controllers
                     ShopId = shopId,
                     ProductId = os.ProductId,
                     Qty = 0,
-                    ReorderLevel = 3,
-                    Source = os.Source,
-                    BuyPrice = os.BuyPrice,
-                    SellPrice = os.SellPrice
+                    ReorderLevel = 3
                 };
                 _db.ShopStocks.Add(ss);
             }

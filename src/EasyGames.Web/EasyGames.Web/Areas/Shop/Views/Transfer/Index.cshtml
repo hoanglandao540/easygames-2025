@@ -20,12 +20,12 @@
                 }
             </select>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-5">
             <label class="form-label">Owner Stock</label>
             <select name="ownerStockId" class="form-select eg-input">
                 @foreach (var o in Model)
                 {
-                    <option value="@o.Id">@o.Product?.Name — OwnerQty:@o.Qty</option>
+                    <option value="@o.Id">@o.Product?.Name — OwnerQty:@o.Qty — @o.Source — Buy:@o.BuyPrice — Sell:@o.SellPrice</option>
                 }
             </select>
         </div>

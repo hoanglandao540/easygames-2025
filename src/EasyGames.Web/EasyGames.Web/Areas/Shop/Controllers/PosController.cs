@@ -1,10 +1,10 @@
-﻿using System;
+﻿
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using EasyGames.Web.Data;
 using EasyGames.Web.Models;
 using EasyGames.Web.Services;
-using EasyGames.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
@@ -17,7 +17,7 @@ namespace EasyGames.Web.Areas.Shop.Controllers
     {
         private readonly AppDbContext _db;
         private readonly IPosCartService _pos;
-        private readonly IInventoryService _inv;
+        private readonly IInventoryService _inv; // kept for other flows if you use it elsewhere
         private readonly ITierService _tier;
         private readonly IEmailService _email;
 
@@ -62,7 +62,7 @@ namespace EasyGames.Web.Areas.Shop.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // quantity controls
+        // qty controls
         public IActionResult Inc(int id) { _pos.Inc(id); return RedirectToAction(nameof(Index)); }
         public IActionResult Dec(int id) { _pos.Dec(id); return RedirectToAction(nameof(Index)); }
         public IActionResult Remove(int id) { _pos.Remove(id); return RedirectToAction(nameof(Index)); }
@@ -71,87 +71,118 @@ namespace EasyGames.Web.Areas.Shop.Controllers
         // POST: /Shop/Pos/Pay
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Pay(int shopId, string customerName, string customerEmail)
+        public async Task<IActionResult> Pay(int shopId, string customerName, string customerEmail, string customerPhone)
         {
-            var vm = _pos.Get();
-            if (!vm.Rows.Any())
+            var cart = _pos.Get();
+            if (cart is null || !cart.Rows.Any())
             {
                 TempData["toast"] = "No items to pay.";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new { shopId });
             }
+
+            // Lookup or create customer by phone (guest allowed)
+            Customer? cust = null;
+            if (!string.IsNullOrWhiteSpace(customerPhone))
+            {
+                var phone = customerPhone.Trim();
+                cust = await _db.Customers.FirstOrDefaultAsync(c => c.Phone == phone);
+                if (cust == null && (!string.IsNullOrWhiteSpace(customerName) || !string.IsNullOrWhiteSpace(customerEmail)))
+                {
+                    cust = new Customer { Name = customerName ?? "", Email = customerEmail ?? "", Phone = phone };
+                    _db.Customers.Add(cust);
+                    await _db.SaveChangesAsync();
+                }
+            }
+
+            // Subtotal in-memory (avoid SQLite decimal SUM quirks)
+            var subtotal = cart.Rows.AsEnumerable().Sum(r => r.Price * r.Qty);
+
+            // Tier discount (if known customer)
+            decimal discount = 0m;
+            if (cust != null && !string.IsNullOrWhiteSpace(cust.Phone))
+            {
+                var lifetime = _db.Orders.AsNoTracking()
+                    .Where(o => o.CustomerPhone == cust.Phone)
+                    .AsEnumerable()
+                    .Select(o => o.Total)
+                    .DefaultIfEmpty(0m)
+                    .Sum();
+
+                var tier = _tier.Evaluate(lifetime);
+                discount = tier switch
+                {
+                    TierLevel.Silver => subtotal * 0.02m,
+                    TierLevel.Gold => subtotal * 0.05m,
+                    TierLevel.Platinum => subtotal * 0.08m,
+                    _ => 0m
+                };
+            }
+
+            var total = subtotal - discount;
 
             await using var tx = await _db.Database.BeginTransactionAsync();
-            Order? order = null;
 
-            try
+            var order = new Order
             {
-                // 1) create order header
-                order = new Order
-                {
-                    CustomerName = customerName ?? "",
-                    CustomerEmail = customerEmail ?? "",
-                    CreatedAt = DateTime.UtcNow,
-                    GrandTotal = vm.GrandTotal
-                };
-                _db.Orders.Add(order);
-                await _db.SaveChangesAsync(); // get Id
+                ShopId = shopId,
+                CustomerId = cust?.Id,
+                CustomerPhone = cust?.Phone ?? (string.IsNullOrWhiteSpace(customerPhone) ? null : customerPhone.Trim()),
+                Total = total,
+                CreatedUtc = DateTime.UtcNow
+            };
+            _db.Orders.Add(order);
+            await _db.SaveChangesAsync(); // get Order.Id
 
-                // 2) add lines + decrease stock
-                foreach (var r in vm.Rows)
-                {
-                    _db.OrderLines.Add(new OrderLine
-                    {
-                        OrderId = order.Id,
-                        ProductId = r.ProductId,
-                        Name = r.Name,
-                        Price = r.Price,
-                        Qty = r.Qty
-                    });
+            // load all involved shop stocks in one query
+            var productIds = cart.Rows.Select(r => r.ProductId).Distinct().ToList();
+            var stocks = await _db.ShopStocks.Where(s => s.ShopId == shopId && productIds.Contains(s.ProductId)).ToListAsync();
+            var byPid = stocks.ToDictionary(s => s.ProductId, s => s);
 
-                    await _inv.DecreaseAsync(shopId, r.ProductId, r.Qty);
+            foreach (var r in cart.Rows)
+            {
+                _db.OrderLines.Add(new OrderLine
+                {
+                    OrderId = order.Id,
+                    ProductId = r.ProductId,
+                    Name = r.Name,
+                    Qty = r.Qty,
+                    Price = r.Price
+                });
+
+                if (!byPid.TryGetValue(r.ProductId, out var srow))
+                {
+                    srow = new ShopStock { ShopId = shopId, ProductId = r.ProductId, Qty = 0, ReorderLevel = 3 };
+                    _db.ShopStocks.Add(srow);
+                    byPid[r.ProductId] = srow;
                 }
 
-                await _db.SaveChangesAsync();
-                await tx.CommitAsync();
+                var newQty = srow.Qty - r.Qty; // allow negative → warn only
+                if (newQty <= srow.ReorderLevel)
+                    TempData["toast"] = $"Warning: {r.Name} low/negative (will be {newQty}). Sale allowed.";
+
+                srow.Qty = newQty;
             }
-            catch (Exception ex)
+
+            await _db.SaveChangesAsync();
+            await tx.CommitAsync();
+
+            // optional receipt (kept simple)
+            if (!string.IsNullOrWhiteSpace(customerEmail))
             {
-                if (_db.Database.CurrentTransaction != null)
-                {
-                    try { await tx.RollbackAsync(); } catch { /* ignore */ }
-                }
-
-                TempData["toast"] = $"Payment failed: {ex.Message}";
-                return RedirectToAction(nameof(Index));
+                await _email.SendAsync(customerEmail, "POS Receipt",
+                    $"Thanks {customerName}! Order #{order.Id} total {order.Total:0.00}.");
             }
-
-            // 3) post-commit: compute tier (SQLite-safe client-side sum), send receipt, clear cart
-            var email = order!.CustomerEmail ?? string.Empty;
-
-            // Force client-side aggregation (SQLite can't SUM decimal server-side)
-            var lifetime = _db.Orders
-                .AsNoTracking()
-                .Where(o => o.CustomerEmail == email)
-                .AsEnumerable()                // switch to LINQ-to-Objects
-                .Select(o => o.GrandTotal)     // decimal property
-                .DefaultIfEmpty(0m)
-                .Sum();
-
-            var tier = _tier.Evaluate(lifetime);
-
-            await _email.SendAsync(order.CustomerEmail, "POS Receipt",
-                $"Thanks {order.CustomerName}! Order #{order.Id} total {order.GrandTotal:0.00}. Tier: {tier}.");
 
             _pos.Clear();
-            return RedirectToAction(nameof(Success), new { id = order.Id, tier = tier });
+            return RedirectToAction(nameof(Success), new { id = order.Id });
         }
 
         // GET: /Shop/Pos/Success
-        public IActionResult Success(int id, TierLevel tier)
+        public IActionResult Success(int id)
         {
-            ViewBag.Tier = tier;
             return View(id);
         }
     }
 }
+
 
