@@ -163,6 +163,7 @@ namespace EasyGames.Web.Controllers
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         // ===== Logout =====
 =======
         // ===== Logout (go straight to Guest page) =====
@@ -176,6 +177,21 @@ namespace EasyGames.Web.Controllers
             await HttpContext.SignOutAsync();
 <<<<<<< HEAD
 <<<<<<< HEAD
+=======
+        // ===== FIXED LOGOUT - Clears session and redirects to Guest =====
+        [HttpPost, ValidateAntiForgeryToken, Authorize]
+        public async Task<IActionResult> Logout()
+        {
+            // Clear session data
+            HttpContext.Session.Clear();
+
+            // Sign out from cookie authentication
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            TempData["toast"] = "You have been logged out successfully.";
+
+            // Redirect to Guest landing page
+>>>>>>> origin/feature/hoang/pos-tier-email
             return RedirectToAction("Guest", "Home");
 =======
             return RedirectToAction("Guest", "Home"); // <- always go to Guest page
