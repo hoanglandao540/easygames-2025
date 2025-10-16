@@ -13,7 +13,8 @@
             <div class="eg-card p-4 h-100">
                 <h4 class="mb-2">Owner (Admin)</h4>
                 <p class="mb-3">Manages products, shops, stock, and users. Sends updates to customers.</p>
-                <a class="eg-btn eg-btn-sm" asp-controller="Account" asp-action="Login">Admin Login</a>
+                <!-- FIX: point to role-specific action -->
+                <a class="eg-btn eg-btn-sm" asp-controller="Account" asp-action="LoginOwner">Admin Login</a>
             </div>
         </div>
 
@@ -21,7 +22,8 @@
             <div class="eg-card p-4 h-100">
                 <h4 class="mb-2">Shop Proprietor</h4>
                 <p class="mb-3">Runs the store: sells via POS and keeps stock healthy.</p>
-                <a class="eg-btn eg-btn-sm" asp-controller="Account" asp-action="Login">Shop Login</a>
+                <!-- FIX: point to role-specific action -->
+                <a class="eg-btn eg-btn-sm" asp-controller="Account" asp-action="LoginShop">Shop Login</a>
             </div>
         </div>
 
@@ -30,7 +32,8 @@
                 <h4 class="mb-2">Customer</h4>
                 <p class="mb-3">Browse, add to cart, and checkout. Track your orders and rewards.</p>
                 <div class="d-flex gap-2">
-                    <a class="eg-btn eg-btn-sm" asp-controller="Account" asp-action="Login">Customer Login</a>
+                    <!-- FIX: point to role-specific action -->
+                    <a class="eg-btn eg-btn-sm" asp-controller="Account" asp-action="LoginCustomer">Customer Login</a>
                     <a class="eg-btn eg-btn-sm" asp-controller="Account" asp-action="Register">Register</a>
                 </div>
             </div>
@@ -94,7 +97,7 @@
         </div>
     </div>
 
-    <!-- Services (not website tech; real shop services) -->
+    <!-- Services -->
     <div class="mb-3">
         <h3 class="eg-h1">Store Services</h3>
     </div>
@@ -108,7 +111,7 @@
         <div class="col-md-6 col-lg-3">
             <div class="eg-card p-4 h-100">
                 <h5 class="mb-2">Rare Collection</h5>
-                <p class="mb-0">Find Rare and unique things at the shop</p>
+                <p class="mb-0">Find rare and unique things at the shop.</p>
             </div>
         </div>
         <div class="col-md-6 col-lg-3">

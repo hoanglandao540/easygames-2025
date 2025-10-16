@@ -1,12 +1,14 @@
 ﻿@using System.Security.Claims
 @{
     var title = ViewData["Title"] as string ?? "EasyGames";
-    bool isAuth = User?.Identity?.IsAuthenticated ?? false;
-    bool isOwner = User?.IsInRole("Owner") ?? false;
-    bool isShop = User?.IsInRole("Shop") ?? false;
-    bool isCustomer = User?.IsInRole("Customer") ?? false;
-    string role = isAuth ? (User.FindFirst(ClaimTypes.Role)?.Value ?? "") : "";
-    string name = isAuth ? (User.Identity?.Name ?? "") : "";
+
+    var isAuth = User?.Identity?.IsAuthenticated ?? false;
+    var roleClaim = User?.FindFirst(ClaimTypes.Role)?.Value ?? "";
+    var userName = User?.Identity?.Name ?? "";
+
+    var isOwner = isAuth && string.Equals(roleClaim, "Owner", StringComparison.OrdinalIgnoreCase);
+    var isShop = isAuth && string.Equals(roleClaim, "Shop", StringComparison.OrdinalIgnoreCase);
+    var isCustomer = isAuth && string.Equals(roleClaim, "Customer", StringComparison.OrdinalIgnoreCase);
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -31,6 +33,7 @@
                 {
                     <a class="eg-nav" asp-area="Storefront" asp-controller="Cart" asp-action="Index">Cart</a>
                     <a class="eg-nav" asp-area="Storefront" asp-controller="Checkout" asp-action="Index">Checkout</a>
+                    <a class="eg-nav" asp-area="Storefront" asp-controller="Orders" asp-action="Index">My Orders</a>
                 }
 
                 @if (isShop)
@@ -57,7 +60,8 @@
             <div class="d-flex align-items-center gap-2">
                 @if (isAuth)
                 {
-                    <a class="small text-secondary text-decoration-none" asp-controller="Account" asp-action="Profile">@name (@role)</a>
+                    <!-- Profile removed: just show text -->
+                    <span class="small text-secondary">@userName (@roleClaim)</span>
                     <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
                         @Html.AntiForgeryToken()
                         <button class="eg-btn eg-btn-sm" type="submit">Logout</button>
@@ -85,7 +89,7 @@
 
     <footer class="eg-surface border-top eg-border mt-auto">
         <div class="container py-3 text-secondary small">
-            Midnight+Gold • © @DateTime.UtcNow.Year EasyGames
+            Created By Fabiha, Akshata, Hoang, Sandesh • © @DateTime.UtcNow.Year EasyGames
         </div>
     </footer>
 
@@ -94,3 +98,5 @@
     @RenderSection("Scripts", required: false)
 </body>
 </html>
+
+
