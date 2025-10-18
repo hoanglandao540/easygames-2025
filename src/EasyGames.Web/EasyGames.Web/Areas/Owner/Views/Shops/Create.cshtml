@@ -3,3 +3,56 @@
     ViewData["Title"] = "Create Shop";
     var proprietors = (IEnumerable<EasyGames.Web.Models.AppUser>)ViewBag.Proprietors;
 }
+
+<h2 class="eg-h1 mb-3">Create New Shop</h2>
+
+@if (TempData["toast"] is string t)
+{
+    <div class="eg-toast mb-3">@t</div>
+}
+
+<div class="eg-card p-4">
+    <form asp-action="Create" method="post">
+        @Html.AntiForgeryToken()
+
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label">Shop Code</label>
+                <input asp-for="ShopCode" class="form-control eg-input" placeholder="e.g., SYD-01" />
+                <div class="form-text text-secondary">Unique identifier for the shop</div>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">City</label>
+                <input asp-for="City" class="form-control eg-input" placeholder="e.g., Sydney" />
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Country</label>
+                <input asp-for="Country" class="form-control eg-input" placeholder="e.g., AU" />
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Phone</label>
+                <input asp-for="Phone" class="form-control eg-input" placeholder="+61-2-0000-0000" />
+            </div>
+
+            <div class="col-12">
+                <label class="form-label">Proprietor (Shop Manager)</label>
+                <select asp-for="ProprietorUserId" class="form-select eg-input">
+                    <option value="">(None - Assign Later)</option>
+                    @foreach (var p in proprietors)
+                    {
+                        <option value="@p.Id">@p.Name (@p.Email)</option>
+                    }
+                </select>
+                <div class="form-text text-secondary">Select a user with Shop role to manage this location</div>
+            </div>
+        </div>
+
+        <div class="d-flex gap-2 mt-4">
+            <button class="eg-btn" type="submit">Create Shop</button>
+            <a class="btn btn-outline-warning" asp-action="Index">Cancel</a>
+        </div>
+    </form>
+</div>

@@ -109,22 +109,20 @@
                 @if (isAuth)
                 {
                     <span class="small text-secondary">@userName (@roleClaim)</span>
-                    <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
-                        @Html.AntiForgeryToken()
-                        <button class="eg-btn eg-btn-sm" type="submit">Logout</button>
-                    </form>
+                    @* CRITICAL FIX: asp-area="" forces root-level route, not area route *@
+                    <a class="eg-btn eg-btn-sm" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
                 }
                 else
                 {
                     <div class="dropdown">
                         <a class="eg-nav dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Login</a>
                         <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end">
-                            <li><a class="dropdown-item" asp-controller="Account" asp-action="LoginCustomer">Customer Login</a></li>
-                            <li><a class="dropdown-item" asp-controller="Account" asp-action="LoginShop">Shop Login</a></li>
-                            <li><a class="dropdown-item" asp-controller="Account" asp-action="LoginOwner">Owner Login</a></li>
+                            <li><a class="dropdown-item" asp-area="" asp-controller="Account" asp-action="LoginCustomer">Customer Login</a></li>
+                            <li><a class="dropdown-item" asp-area="" asp-controller="Account" asp-action="LoginShop">Shop Login</a></li>
+                            <li><a class="dropdown-item" asp-area="" asp-controller="Account" asp-action="LoginOwner">Owner Login</a></li>
                         </ul>
                     </div>
-                    <a class="eg-nav" asp-controller="Account" asp-action="Register">Register</a>
+                    <a class="eg-nav" asp-area="" asp-controller="Account" asp-action="Register">Register</a>
                 }
             </div>
         </div>
