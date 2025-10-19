@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using System.Linq;
+using System.Threading.Tasks;
+using System;
 
 namespace EasyGames.Web.Areas.Storefront.Controllers
 {
@@ -106,14 +109,17 @@ namespace EasyGames.Web.Areas.Storefront.Controllers
             // Calculate subtotal - FIX: Use AsEnumerable() for client-side calculation
             var subtotal = cart.Rows.AsEnumerable().Sum(r => r.Price * r.Qty);
 
-            // Apply tier discount - FIX: Use AsEnumerable() for SQLite compatibility
+            // Apply tier discount - async-safe approach: fetch orders async, then sum in memory
             decimal discount = 0m;
             if (customer != null && !string.IsNullOrWhiteSpace(customer.Phone))
             {
-                var lifetime = await _db.Orders
+                // Fetch matching orders from DB asynchronously
+                var orders = await _db.Orders
                     .Where(o => o.CustomerPhone == customer.Phone)
-                    .AsEnumerable()  // Execute query first
-                    .Sum(o => o.Total);  // Then sum on client side
+                    .ToListAsync();
+
+                // Sum on client side (works even if list is empty)
+                var lifetime = orders.Sum(o => o.Total);
 
                 var tierLevel = _tier.Evaluate(lifetime);
                 discount = tierLevel switch
