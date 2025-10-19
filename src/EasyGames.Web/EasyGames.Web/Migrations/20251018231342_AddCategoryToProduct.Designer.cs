@@ -3,6 +3,7 @@ using System;
 using EasyGames.Web.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EasyGames.Web.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251018231342_AddCategoryToProduct")]
+    partial class AddCategoryToProduct
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.21");
@@ -35,19 +38,10 @@ namespace EasyGames.Web.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> origin/feature/hoang/pos-tier-email
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-<<<<<<< HEAD
-=======
->>>>>>> feature/akshata/data-shops
-=======
->>>>>>> origin/feature/hoang/pos-tier-email
                     b.Property<int>("Role")
                         .HasColumnType("INTEGER");
 
@@ -62,18 +56,9 @@ namespace EasyGames.Web.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-<<<<<<< HEAD
-<<<<<<< HEAD
                     b.Property<int?>("AppUserId")
                         .HasColumnType("INTEGER");
 
-=======
->>>>>>> feature/akshata/data-shops
-=======
-                    b.Property<int?>("AppUserId")
-                        .HasColumnType("INTEGER");
-
->>>>>>> origin/feature/hoang/pos-tier-email
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -82,10 +67,6 @@ namespace EasyGames.Web.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> origin/feature/hoang/pos-tier-email
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -94,13 +75,6 @@ namespace EasyGames.Web.Migrations
 
                     b.HasIndex("AppUserId");
 
-<<<<<<< HEAD
-=======
-                    b.HasKey("Id");
-
->>>>>>> feature/akshata/data-shops
-=======
->>>>>>> origin/feature/hoang/pos-tier-email
                     b.ToTable("Customers");
                 });
 
@@ -110,8 +84,6 @@ namespace EasyGames.Web.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-<<<<<<< HEAD
-<<<<<<< HEAD
                     b.Property<DateTime>("CreatedUtc")
                         .HasColumnType("TEXT");
 
@@ -125,45 +97,14 @@ namespace EasyGames.Web.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<decimal>("Total")
-=======
-                    b.Property<DateTime>("CreatedAt")
-=======
-                    b.Property<DateTime>("CreatedUtc")
->>>>>>> origin/feature/hoang/pos-tier-email
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("CustomerId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("CustomerPhone")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("ShopId")
-                        .HasColumnType("INTEGER");
-
-<<<<<<< HEAD
-                    b.Property<decimal>("GrandTotal")
->>>>>>> feature/akshata/data-shops
-=======
-                    b.Property<decimal>("Total")
->>>>>>> origin/feature/hoang/pos-tier-email
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> origin/feature/hoang/pos-tier-email
                     b.HasIndex("CustomerId");
 
                     b.HasIndex("ShopId");
 
-<<<<<<< HEAD
-=======
->>>>>>> feature/akshata/data-shops
-=======
->>>>>>> origin/feature/hoang/pos-tier-email
                     b.ToTable("Orders");
                 });
 
@@ -191,16 +132,8 @@ namespace EasyGames.Web.Migrations
 
                     b.HasKey("Id");
 
-<<<<<<< HEAD
-<<<<<<< HEAD
                     b.HasIndex("OrderId");
 
-=======
->>>>>>> feature/akshata/data-shops
-=======
-                    b.HasIndex("OrderId");
-
->>>>>>> origin/feature/hoang/pos-tier-email
                     b.ToTable("OrderLines");
                 });
 
@@ -259,15 +192,7 @@ namespace EasyGames.Web.Migrations
                     b.ToTable("Products");
                 });
 
-<<<<<<< HEAD
-<<<<<<< HEAD
             modelBuilder.Entity("EasyGames.Web.Models.ShopLocation", b =>
-=======
-            modelBuilder.Entity("EasyGames.Web.Models.Shop", b =>
->>>>>>> feature/akshata/data-shops
-=======
-            modelBuilder.Entity("EasyGames.Web.Models.ShopLocation", b =>
->>>>>>> origin/feature/hoang/pos-tier-email
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -285,37 +210,20 @@ namespace EasyGames.Web.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> origin/feature/hoang/pos-tier-email
                     b.Property<int?>("ProprietorId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("ProprietorUserId")
                         .HasColumnType("INTEGER");
 
-<<<<<<< HEAD
-=======
->>>>>>> feature/akshata/data-shops
-=======
->>>>>>> origin/feature/hoang/pos-tier-email
                     b.Property<string>("ShopCode")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-<<<<<<< HEAD
-<<<<<<< HEAD
                     b.HasIndex("ProprietorId");
 
-=======
->>>>>>> feature/akshata/data-shops
-=======
-                    b.HasIndex("ProprietorId");
-
->>>>>>> origin/feature/hoang/pos-tier-email
                     b.ToTable("Shops");
                 });
 
@@ -349,10 +257,6 @@ namespace EasyGames.Web.Migrations
 
                     b.HasKey("Id");
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> origin/feature/hoang/pos-tier-email
                     b.HasIndex("ProductId");
 
                     b.HasIndex("ShopId");
@@ -395,14 +299,6 @@ namespace EasyGames.Web.Migrations
                         .IsRequired();
                 });
 
-<<<<<<< HEAD
-=======
-                    b.ToTable("ShopStocks");
-                });
-
->>>>>>> feature/akshata/data-shops
-=======
->>>>>>> origin/feature/hoang/pos-tier-email
             modelBuilder.Entity("EasyGames.Web.Models.OwnerStock", b =>
                 {
                     b.HasOne("EasyGames.Web.Models.Product", "Product")
@@ -413,10 +309,6 @@ namespace EasyGames.Web.Migrations
 
                     b.Navigation("Product");
                 });
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> origin/feature/hoang/pos-tier-email
 
             modelBuilder.Entity("EasyGames.Web.Models.ShopLocation", b =>
                 {
@@ -455,11 +347,6 @@ namespace EasyGames.Web.Migrations
                 {
                     b.Navigation("Lines");
                 });
-<<<<<<< HEAD
-=======
->>>>>>> feature/akshata/data-shops
-=======
->>>>>>> origin/feature/hoang/pos-tier-email
 #pragma warning restore 612, 618
         }
     }

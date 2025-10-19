@@ -15,7 +15,7 @@
             <div class="col-md-6 col-lg-3">
                 <div class="eg-card p-4 h-100 text-center">
                     <div class="mb-3">
-                        <span class="badge bg-danger fs-5">Admin</span>
+                        <span class="badge bg-warning text-dark fs-5">Admin</span>
                     </div>
                     <h4 class="mb-3">Owner Portal</h4>
                     <p class="mb-4 text-secondary">Manage products, shops, inventory, users, and send customer communications</p>
@@ -28,7 +28,7 @@
             <div class="col-md-6 col-lg-3">
                 <div class="eg-card p-4 h-100 text-center">
                     <div class="mb-3">
-                        <span class="badge bg-info fs-5">Staff</span>
+                        <span class="badge bg-warning text-dark fs-5">Staff</span>
                     </div>
                     <h4 class="mb-3">Shop Portal</h4>
                     <p class="mb-4 text-secondary">Access POS system, manage shop inventory, and process in-store sales</p>
@@ -41,7 +41,7 @@
             <div class="col-md-6 col-lg-3">
                 <div class="eg-card p-4 h-100 text-center">
                     <div class="mb-3">
-                        <span class="badge bg-success fs-5">Member</span>
+                        <span class="badge bg-warning text-dark fs-5">Member</span>
                     </div>
                     <h4 class="mb-3">Customer Portal</h4>
                     <p class="mb-4 text-secondary">Shop online, track orders, view purchase history, and earn tier rewards</p>
@@ -83,7 +83,7 @@
                         <li class="mb-2">✓ Pre-orders & seasonal favorites</li>
                         <li class="mb-2">✓ Retro and collector editions</li>
                     </ul>
-                    <a class="eg-btn eg-btn-sm w-100" asp-area="Storefront" asp-controller="Catalog" asp-action="Index">
+                    <a class="eg-btn eg-btn-sm w-100" asp-area="Storefront" asp-controller="Catalog" asp-action="Index" asp-route-category="Games">
                         Shop Games
                     </a>
                 </div>
@@ -98,7 +98,7 @@
                         <li class="mb-2">✓ Action figures & collectibles</li>
                         <li class="mb-2">✓ Board games & party games</li>
                     </ul>
-                    <a class="eg-btn eg-btn-sm w-100" asp-area="Storefront" asp-controller="Catalog" asp-action="Index">
+                    <a class="eg-btn eg-btn-sm w-100" asp-area="Storefront" asp-controller="Catalog" asp-action="Index" asp-route-category="Toys">
                         Shop Toys
                     </a>
                 </div>
@@ -113,7 +113,7 @@
                         <li class="mb-2">✓ Art books & game guides</li>
                         <li class="mb-2">✓ Educational & activity books</li>
                     </ul>
-                    <a class="eg-btn eg-btn-sm w-100" asp-area="Storefront" asp-controller="Catalog" asp-action="Index">
+                    <a class="eg-btn eg-btn-sm w-100" asp-area="Storefront" asp-controller="Catalog" asp-action="Index" asp-route-category="Books">
                         Shop Books
                     </a>
                 </div>
