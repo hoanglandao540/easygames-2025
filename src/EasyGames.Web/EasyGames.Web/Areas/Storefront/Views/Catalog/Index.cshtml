@@ -3,79 +3,173 @@
 @{
     ViewData["Title"] = "Catalog";
     var cart = Cart.Get();
+    var currentSearch = ViewBag.CurrentSearch as string;
+    var currentCategory = ViewBag.CurrentCategory as string;
+    var currentSort = ViewBag.CurrentSort as string;
+    var categories = ViewBag.Categories as IEnumerable<string> ?? new List<string>();
 }
 
-<h2 class="eg-h1 mb-3">Catalog</h2>
+<h2 class="eg-h1 mb-4">Product Catalog</h2>
 
 @if (TempData["toast"] is string toast)
 {
-    <div class="eg-toast">@toast</div>
-    <script>
-        setTimeout(() => document.querySelector('.eg-toast')?.remove(), 2000);
-    </script>
+    <div class="eg-toast mb-3">@toast</div>
 }
 
-<div class="row g-3">
-    @foreach (var p in Model)
-    {
-        var qty = cart.Rows.FirstOrDefault(r => r.ProductId == p.Id)?.Qty ?? 0;
-        <div class="col-md-4">
-            <div class="eg-card h-100 d-flex flex-column">
-                <div class="fw-bold mb-1">@p.Name</div>
-                <div class="text-secondary mb-2">@p.Code</div>
-                <div class="mb-3">Price: <b class="text-warning">@p.Price.ToString("0.00")</b></div>
+<!-- Search and Filter Bar -->
+<div class="eg-card p-3 mb-4">
+    <form method="get" asp-action="Index">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label">Search Products</label>
+                <input type="text"
+                       name="search"
+                       value="@currentSearch"
+                       class="form-control eg-input"
+                       placeholder="Search by name or code...">
+            </div>
 
-                <div class="mt-auto">
-                    @if (qty <= 0)
+            <div class="col-md-3">
+                <label class="form-label">Category</label>
+                <select name="category" class="form-select eg-input">
+                    <option value="All" selected="@(string.IsNullOrEmpty(currentCategory) || currentCategory == "All")">All Categories</option>
+                    @foreach (var cat in categories)
                     {
-                        <!-- First time add -->
-                        <a class="eg-btn eg-btn-sm"
-                           asp-area="Storefront"
-                           asp-controller="Cart"
-                           asp-action="Add"
-                           asp-route-id="@p.Id"
-                           asp-route-returnUrl="@(Context.Request.Path + Context.Request.QueryString)">
-                            Add to cart
-                        </a>
+                        <option value="@cat" selected="@(currentCategory == cat)">@cat</option>
                     }
-                    else
-                    {
-                        <!-- Quantity controls on the card -->
-                        <div class="d-inline-flex align-items-center gap-2">
-                            <a class="eg-btn eg-btn-sm"
-                               asp-area="Storefront"
-                               asp-controller="Cart"
-                               asp-action="Dec"
-                               asp-route-id="@p.Id"
-                               asp-route-returnUrl="@(Context.Request.Path + Context.Request.QueryString)">
-                                &minus;
-                            </a>
-                            <span class="text-warning fw-bold" style="min-width:2ch; text-align:center;">@qty</span>
-                            <a class="eg-btn eg-btn-sm"
-                               asp-area="Storefront"
-                               asp-controller="Cart"
-                               asp-action="Inc"
-                               asp-route-id="@p.Id"
-                               asp-route-returnUrl="@(Context.Request.Path + Context.Request.QueryString)">
-                                +
-                            </a>
-                        </div>
-                        <a class="btn btn-link text-warning ms-2 p-0"
-                           asp-area="Storefront"
-                           asp-controller="Cart"
-                           asp-action="Remove"
-                           asp-route-id="@p.Id"
-                           asp-route-returnUrl="@(Context.Request.Path + Context.Request.QueryString)">
-                            Remove
-                        </a>
-                    }
-                </div>
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label">Sort By</label>
+                <select name="sort" class="form-select eg-input">
+                    <option value="" selected="@(string.IsNullOrEmpty(currentSort))">Default</option>
+                    <option value="name_asc" selected="@(currentSort == "name_asc")">Name (A-Z)</option>
+                    <option value="name_desc" selected="@(currentSort == "name_desc")">Name (Z-A)</option>
+                    <option value="price_asc" selected="@(currentSort == "price_asc")">Price (Low-High)</option>
+                    <option value="price_desc" selected="@(currentSort == "price_desc")">Price (High-Low)</option>
+                </select>
+            </div>
+
+            <div class="col-md-2">
+                <button type="submit" class="eg-btn w-100">Apply</button>
             </div>
         </div>
-    }
+
+        @if (!string.IsNullOrEmpty(currentSearch) || (!string.IsNullOrEmpty(currentCategory) && currentCategory != "All"))
+        {
+            <div class="mt-2">
+                <a asp-action="Index" class="btn btn-sm btn-outline-warning">Clear Filters</a>
+            </div>
+        }
+    </form>
 </div>
 
-<a class="eg-btn mt-3 d-inline-block"
-   asp-area="Storefront" asp-controller="Cart" asp-action="Index">
-    View Cart
-</a>
+<!-- Results Count -->
+<div class="mb-3">
+    <p class="text-secondary">
+        Showing @Model.Count() product(s)
+        @if (!string.IsNullOrEmpty(currentSearch))
+        {
+            <text> matching "<strong>@currentSearch</strong>"</text>
+        }
+        @if (!string.IsNullOrEmpty(currentCategory) && currentCategory != "All")
+        {
+            <text> in <strong>@currentCategory</strong></text>
+        }
+    </p>
+</div>
+
+<!-- Product Grid -->
+@if (!Model.Any())
+{
+    <div class="eg-card p-4 text-center">
+        <h5 class="mb-2">No products found</h5>
+        <p class="text-secondary mb-3">Try adjusting your search or filter criteria</p>
+        <a class="eg-btn eg-btn-sm" asp-action="Index">View All Products</a>
+    </div>
+}
+else
+{
+    <div class="row g-3">
+        @foreach (var p in Model)
+        {
+            var qty = cart.Rows.FirstOrDefault(r => r.ProductId == p.Id)?.Qty ?? 0;
+            <div class="col-md-4 col-lg-3">
+                <div class="eg-card h-100 d-flex flex-column">
+                    <div class="mb-2">
+                        <span class="badge bg-secondary small">@p.Category</span>
+                    </div>
+                    <h6 class="fw-bold mb-1">@p.Name</h6>
+                    <div class="text-secondary small mb-2">@p.Code</div>
+                    <div class="mb-3">
+                        <span class="text-warning fw-bold fs-5">$@p.Price.ToString("0.00")</span>
+                    </div>
+
+                    <div class="mt-auto">
+                        @if (qty <= 0)
+                        {
+                            <a class="eg-btn eg-btn-sm w-100"
+                               asp-area="Storefront"
+                               asp-controller="Cart"
+                               asp-action="Add"
+                               asp-route-id="@p.Id"
+                               asp-route-returnUrl="@(Context.Request.Path + Context.Request.QueryString)">
+                                Add to Cart
+                            </a>
+                        }
+                        else
+                        {
+                            <div class="d-flex align-items-center justify-content-between gap-2">
+                                <a class="eg-btn eg-btn-sm flex-shrink-0"
+                                   asp-area="Storefront"
+                                   asp-controller="Cart"
+                                   asp-action="Dec"
+                                   asp-route-id="@p.Id"
+                                   asp-route-returnUrl="@(Context.Request.Path + Context.Request.QueryString)">
+                                    −
+                                </a>
+                                <span class="text-warning fw-bold text-center flex-grow-1">@qty</span>
+                                <a class="eg-btn eg-btn-sm flex-shrink-0"
+                                   asp-area="Storefront"
+                                   asp-controller="Cart"
+                                   asp-action="Inc"
+                                   asp-route-id="@p.Id"
+                                   asp-route-returnUrl="@(Context.Request.Path + Context.Request.QueryString)">
+                                    +
+                                </a>
+                            </div>
+                            <a class="btn btn-link text-warning w-100 small p-0 mt-1"
+                               asp-area="Storefront"
+                               asp-controller="Cart"
+                               asp-action="Remove"
+                               asp-route-id="@p.Id"
+                               asp-route-returnUrl="@(Context.Request.Path + Context.Request.QueryString)">
+                                Remove
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<div class="mt-4">
+    <a class="eg-btn" asp-area="Storefront" asp-controller="Cart" asp-action="Index">
+        View Cart (@cart.Rows.Sum(r => r.Qty) items)
+    </a>
+</div>
+
+@section Scripts {
+    <script>
+        // Auto-hide toast after 3 seconds
+        setTimeout(() => {
+            const toast = document.querySelector('.eg-toast');
+            if (toast) {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }
+        }, 3000);
+    </script>
+}

@@ -1,7 +1,11 @@
 ﻿@model IEnumerable<EasyGames.Web.Models.AppUser>
 @{
     ViewData["Title"] = "Users";
+    var currentSearch = ViewBag.CurrentSearch as string;
+    var currentRole = ViewBag.CurrentRole as string;
+    var currentSort = ViewBag.CurrentSort as string;
 }
+
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h2 class="eg-h1 m-0">Users</h2>
     <a class="eg-btn" asp-action="Create">+ New User</a>
@@ -12,42 +16,108 @@
     <div class="eg-toast mb-3">@t</div>
 }
 
-<table class="table eg-table table-hover">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Role</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var u in Model)
+<!-- Search and Filter Bar -->
+<div class="eg-card p-3 mb-3">
+    <form method="get" asp-action="Index">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label">Search</label>
+                <input type="text"
+                       name="search"
+                       value="@currentSearch"
+                       class="form-control eg-input"
+                       placeholder="Search by name, email, or phone...">
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label">Role</label>
+                <select name="role" class="form-select eg-input">
+                    <option value="All" selected="@(string.IsNullOrEmpty(currentRole) || currentRole == "All")">All Roles</option>
+                    <option value="Owner" selected="@(currentRole == "Owner")">Owner</option>
+                    <option value="Shop" selected="@(currentRole == "Shop")">Shop</option>
+                    <option value="Customer" selected="@(currentRole == "Customer")">Customer</option>
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label">Sort By</label>
+                <select name="sort" class="form-select eg-input">
+                    <option value="" selected="@(string.IsNullOrEmpty(currentSort))">Role, then Name</option>
+                    <option value="name_asc" selected="@(currentSort == "name_asc")">Name (A-Z)</option>
+                    <option value="name_desc" selected="@(currentSort == "name_desc")">Name (Z-A)</option>
+                    <option value="email_asc" selected="@(currentSort == "email_asc")">Email (A-Z)</option>
+                    <option value="role_asc" selected="@(currentSort == "role_asc")">Role</option>
+                </select>
+            </div>
+
+            <div class="col-md-2">
+                <button type="submit" class="eg-btn w-100">Apply</button>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(currentSearch) || (!string.IsNullOrEmpty(currentRole) && currentRole != "All") || !string.IsNullOrEmpty(currentSort))
         {
-            <tr>
-                <td>@u.Name</td>
-                <td>@u.Email</td>
-                <td>@u.Phone</td>
-                <td>
-                    @if (u.Role == EasyGames.Web.Models.AppRole.Owner)
-                    {
-                        <span class="badge bg-danger">Owner</span>
-                    }
-                    else if (u.Role == EasyGames.Web.Models.AppRole.Shop)
-                    {
-                        <span class="badge bg-info">Shop</span>
-                    }
-                    else
-                    {
-                        <span class="badge bg-success">Customer</span>
-                    }
-                </td>
-                <td class="text-end">
-                    <a asp-action="Edit" asp-route-id="@u.Id">Edit</a> |
-                    <a asp-action="Delete" asp-route-id="@u.Id">Delete</a>
-                </td>
-            </tr>
+            <div class="mt-2">
+                <a asp-action="Index" class="btn btn-sm btn-outline-warning">Clear Filters</a>
+            </div>
         }
-    </tbody>
-</table>
+    </form>
+</div>
+
+<div class="mb-3">
+    <p class="text-secondary">Showing @Model.Count() user(s)</p>
+</div>
+
+<div class="table-responsive">
+    <table class="table eg-table table-hover">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Role</th>
+                <th class="text-end">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var u in Model)
+            {
+                <tr>
+                    <td>@u.Name</td>
+                    <td>@u.Email</td>
+                    <td>@(string.IsNullOrEmpty(u.Phone) ? "—" : u.Phone)</td>
+                    <td>
+                        @if (u.Role == EasyGames.Web.Models.AppRole.Owner)
+                        {
+                            <span class="badge bg-warning text-dark">Owner</span>
+                        }
+                        else if (u.Role == EasyGames.Web.Models.AppRole.Shop)
+                        {
+                            <span class="badge bg-warning text-dark">Shop</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning text-dark">Customer</span>
+                        }
+                    </td>
+                    <td class="text-end">
+                        <a asp-action="Edit" asp-route-id="@u.Id">Edit</a> |
+                        <a asp-action="Delete" asp-route-id="@u.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        setTimeout(() => {
+            const toast = document.querySelector('.eg-toast');
+            if (toast) {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }
+        }, 3000);
+    </script>
+}

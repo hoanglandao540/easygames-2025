@@ -1,33 +1,124 @@
 ﻿@model IEnumerable<EasyGames.Web.Models.OwnerStock>
 @{
-    ViewData["Title"] = "Owner → OwnerStock";
-}
-<h2 class="eg-h1 mb-3">Owner Inventory</h2>
-@if (TempData["toast"] is string t)
-{
-    <div class="eg-card mb-3">@t</div>
+    ViewData["Title"] = "Owner → Owner Inventory";
+    var currentSearch = ViewBag.CurrentSearch as string;
+    var currentSource = ViewBag.CurrentSource as string;
+    var currentSort = ViewBag.CurrentSort as string;
+    var sources = ViewBag.Sources as IEnumerable<string> ?? new List<string>();
 }
 
-<div class="mb-2">
+<h2 class="eg-h1 mb-3">Owner Inventory</h2>
+
+@if (TempData["toast"] is string t)
+{
+    <div class="eg-toast mb-3">@t</div>
+}
+
+<!-- Search and Filter Bar -->
+<div class="eg-card p-3 mb-3">
+    <form method="get" asp-action="Index">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label">Search Product</label>
+                <input type="text"
+                       name="search"
+                       value="@currentSearch"
+                       class="form-control eg-input"
+                       placeholder="Search by name or code...">
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label">Source</label>
+                <select name="source" class="form-select eg-input">
+                    <option value="All" selected="@(string.IsNullOrEmpty(currentSource) || currentSource == "All")">All Sources</option>
+                    @foreach (var src in sources)
+                    {
+                        <option value="@src" selected="@(currentSource == src)">@src</option>
+                    }
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label">Sort By</label>
+                <select name="sort" class="form-select eg-input">
+                    <option value="" selected="@(string.IsNullOrEmpty(currentSort))">Product Name (A-Z)</option>
+                    <option value="name_asc" selected="@(currentSort == "name_asc")">Name (A-Z)</option>
+                    <option value="name_desc" selected="@(currentSort == "name_desc")">Name (Z-A)</option>
+                    <option value="qty_asc" selected="@(currentSort == "qty_asc")">Quantity (Low-High)</option>
+                    <option value="qty_desc" selected="@(currentSort == "qty_desc")">Quantity (High-Low)</option>
+                    <option value="profit_asc" selected="@(currentSort == "profit_asc")">Profit Margin (Low-High)</option>
+                    <option value="profit_desc" selected="@(currentSort == "profit_desc")">Profit Margin (High-Low)</option>
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <button type="submit" class="eg-btn w-100">Apply Filters</button>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(currentSearch) || (!string.IsNullOrEmpty(currentSource) && currentSource != "All") || !string.IsNullOrEmpty(currentSort))
+        {
+            <div class="mt-2">
+                <a asp-action="Index" class="btn btn-sm btn-outline-warning">Clear All Filters</a>
+            </div>
+        }
+    </form>
+</div>
+
+<div class="mb-3 d-flex justify-content-between align-items-center">
+    <p class="text-secondary mb-0">Showing @Model.Count() item(s)</p>
     <a class="eg-btn" asp-action="Create">+ New Owner Stock</a>
 </div>
 
-<table class="table eg-table table-hover">
-    <thead><tr><th>Product</th><th class="text-end">Qty</th><th>Source</th><th class="text-end">Buy</th><th class="text-end">Sell</th><th></th></tr></thead>
-    <tbody>
-        @foreach (var x in Model)
-        {
+<div class="table-responsive">
+    <table class="table eg-table table-hover">
+        <thead>
             <tr>
-                <td>@x.Product?.Name</td>
-                <td class="text-end">@x.Qty</td>
-                <td>@x.Source</td>
-                <td class="text-end">@x.BuyPrice.ToString("0.00")</td>
-                <td class="text-end">@x.SellPrice.ToString("0.00")</td>
-                <td class="text-end">
-                    <a asp-action="Edit" asp-route-id="@x.Id">Edit</a> |
-                    <a asp-action="Delete" asp-route-id="@x.Id">Delete</a>
-                </td>
+                <th>Product</th>
+                <th class="text-end">Qty</th>
+                <th>Source</th>
+                <th class="text-end">Buy Price</th>
+                <th class="text-end">Sell Price</th>
+                <th class="text-end">Profit/Unit</th>
+                <th class="text-end">Actions</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var x in Model)
+            {
+                var profit = x.SellPrice - x.BuyPrice;
+                var profitClass = profit > 0 ? "text-success" : "text-warning";
+
+                <tr>
+                    <td>
+                        <div class="fw-bold">@x.Product?.Name</div>
+                        <div class="small text-secondary">@x.Product?.Code</div>
+                    </td>
+                    <td class="text-end">
+                        <span class="@(x.Qty < 50 ? "text-warning" : "")">@x.Qty</span>
+                    </td>
+                    <td><span class="badge bg-secondary">@x.Source</span></td>
+                    <td class="text-end">$@x.BuyPrice.ToString("0.00")</td>
+                    <td class="text-end">$@x.SellPrice.ToString("0.00")</td>
+                    <td class="text-end @profitClass">$@profit.ToString("0.00")</td>
+                    <td class="text-end">
+                        <a asp-action="Edit" asp-route-id="@x.Id">Edit</a> |
+                        <a asp-action="Delete" asp-route-id="@x.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        setTimeout(() => {
+            const toast = document.querySelector('.eg-toast');
+            if (toast) {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }
+        }, 3000);
+    </script>
+}

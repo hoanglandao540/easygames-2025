@@ -1,16 +1,76 @@
 ﻿@model IEnumerable<EasyGames.Web.Models.Product>
 @{
     ViewData["Title"] = "Owner → Products";
+    var currentSearch = ViewBag.CurrentSearch as string;
+    var currentCategory = ViewBag.CurrentCategory as string;
+    var currentSort = ViewBag.CurrentSort as string;
+    var categories = ViewBag.Categories as IEnumerable<string> ?? new List<string>();
 }
+
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h2 class="eg-h1 m-0">Products</h2>
-    <a class="eg-btn" asp-action="Create">+ New</a>
+    <a class="eg-btn" asp-action="Create">+ New Product</a>
 </div>
 
 @if (TempData["msg"] is string msg)
 {
-    <div class="eg-card mb-3">@msg</div>
+    <div class="eg-toast mb-3">@msg</div>
 }
+
+<!-- Search and Filter Bar -->
+<div class="eg-card p-3 mb-3">
+    <form method="get" asp-action="Index">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label">Search</label>
+                <input type="text"
+                       name="search"
+                       value="@currentSearch"
+                       class="form-control eg-input"
+                       placeholder="Search by name or code...">
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label">Category</label>
+                <select name="category" class="form-select eg-input">
+                    <option value="All" selected="@(string.IsNullOrEmpty(currentCategory) || currentCategory == "All")">All Categories</option>
+                    @foreach (var cat in categories)
+                    {
+                        <option value="@cat" selected="@(currentCategory == cat)">@cat</option>
+                    }
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label">Sort By</label>
+                <select name="sort" class="form-select eg-input">
+                    <option value="" selected="@(string.IsNullOrEmpty(currentSort))">Default (ID)</option>
+                    <option value="name_asc" selected="@(currentSort == "name_asc")">Name (A-Z)</option>
+                    <option value="name_desc" selected="@(currentSort == "name_desc")">Name (Z-A)</option>
+                    <option value="code_asc" selected="@(currentSort == "code_asc")">Code (A-Z)</option>
+                    <option value="price_asc" selected="@(currentSort == "price_asc")">Price (Low-High)</option>
+                    <option value="price_desc" selected="@(currentSort == "price_desc")">Price (High-Low)</option>
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <button type="submit" class="eg-btn w-100">Apply Filters</button>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(currentSearch) || (!string.IsNullOrEmpty(currentCategory) && currentCategory != "All") || !string.IsNullOrEmpty(currentSort))
+        {
+            <div class="mt-2">
+                <a asp-action="Index" class="btn btn-sm btn-outline-warning">Clear All Filters</a>
+            </div>
+        }
+    </form>
+</div>
+
+<!-- Results Count -->
+<div class="mb-3">
+    <p class="text-secondary">Showing @Model.Count() product(s)</p>
+</div>
 
 <table class="table eg-table table-hover">
     <thead>
@@ -18,8 +78,9 @@
             <th>Id</th>
             <th>Code</th>
             <th>Name</th>
+            <th>Category</th>
             <th class="text-end">Price</th>
-            <th></th>
+            <th class="text-end">Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -29,7 +90,8 @@
                 <td>@p.Id</td>
                 <td>@p.Code</td>
                 <td>@p.Name</td>
-                <td class="text-end">@p.Price.ToString("0.00")</td>
+                <td><span class="badge bg-secondary">@p.Category</span></td>
+                <td class="text-end">$@p.Price.ToString("0.00")</td>
                 <td class="text-end">
                     <a asp-action="Edit" asp-route-id="@p.Id">Edit</a> |
                     <a asp-action="Delete" asp-route-id="@p.Id">Delete</a>
@@ -39,3 +101,14 @@
     </tbody>
 </table>
 
+@section Scripts {
+    <script>
+        setTimeout(() => {
+            const toast = document.querySelector('.eg-toast');
+            if (toast) {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }
+        }, 3000);
+    </script>
+}

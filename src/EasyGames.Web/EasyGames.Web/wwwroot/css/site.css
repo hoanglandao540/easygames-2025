@@ -126,12 +126,10 @@
         transform: scale(0.95);
     }
 
-/* Make sure buttons are visible in button groups */
 .btn-group .eg-qty-btn {
     margin: 0 !important;
 }
 
-/* Quantity display between buttons */
 .eg-qty-display {
     color: var(--eg-gold) !important;
     font-weight: 700;
@@ -142,7 +140,6 @@
     display: inline-block;
 }
 
-/* ===== FORM INPUTS ===== */
 .eg-input,
 .form-control.eg-input,
 .form-select.eg-input {
