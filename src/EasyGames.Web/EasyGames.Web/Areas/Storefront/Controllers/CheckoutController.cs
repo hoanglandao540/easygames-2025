@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using System.Linq;
+using System.Threading.Tasks;
+using System;
 
 namespace EasyGames.Web.Areas.Storefront.Controllers
 {
@@ -27,19 +30,33 @@ namespace EasyGames.Web.Areas.Storefront.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            ViewBag.Cart = _cart.Get();
-            return View(new CheckoutVM());
+            var cart = _cart.Get();
+            if (!cart.Rows.Any())
+            {
+                TempData["toast"] = "Cart is empty.";
+                return RedirectToAction("Index", "Catalog");
+            }
+
+            // Pre-fill with user info
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value ?? "";
+            var userEmail = User.FindFirst(ClaimTypes.Email)?.Value ?? "";
+
+            var vm = new CheckoutVM
+            {
+                CustomerName = userName,
+                CustomerEmail = userEmail
+            };
+
+            ViewBag.Cart = cart;
+            ViewBag.UserName = userName;
+            ViewBag.UserEmail = userEmail;
+
+            return View(vm);
         }
 
         [HttpPost, ValidateAntiForgeryToken]
-        public async Task<IActionResult> Index(CheckoutVM vm)
+        public async Task<IActionResult> Index(CheckoutVM vm, string address)
         {
-            if (!ModelState.IsValid)
-            {
-                ViewBag.Cart = _cart.Get();
-                return View(vm);
-            }
-
             var cart = _cart.Get();
             if (!cart.Rows.Any())
             {
@@ -47,10 +64,21 @@ namespace EasyGames.Web.Areas.Storefront.Controllers
                 return RedirectToAction("Index", "Catalog");
             }
 
-            // Get current user's phone from claims
+            // Get user info from claims (cannot be changed)
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value ?? "";
+            var userEmail = User.FindFirst(ClaimTypes.Email)?.Value ?? "";
             var userPhone = User.FindFirst(ClaimTypes.MobilePhone)?.Value ?? "";
 
-            // FIX: Find or create Customer record
+            if (string.IsNullOrWhiteSpace(address))
+            {
+                ModelState.AddModelError("address", "Delivery address is required.");
+                ViewBag.Cart = cart;
+                ViewBag.UserName = userName;
+                ViewBag.UserEmail = userEmail;
+                return View(vm);
+            }
+
+            // Find or create Customer record
             Customer? customer = null;
             if (!string.IsNullOrWhiteSpace(userPhone))
             {
@@ -61,8 +89,8 @@ namespace EasyGames.Web.Areas.Storefront.Controllers
                 {
                     customer = new Customer
                     {
-                        Name = vm.CustomerName ?? "",
-                        Email = vm.CustomerEmail ?? "",
+                        Name = userName,
+                        Email = userEmail,
                         Phone = userPhone
                     };
                     _db.Customers.Add(customer);
@@ -70,26 +98,28 @@ namespace EasyGames.Web.Areas.Storefront.Controllers
                 }
                 else
                 {
-                    // Update if newer info provided
-                    if (!string.IsNullOrWhiteSpace(vm.CustomerName))
-                        customer.Name = vm.CustomerName;
-                    if (!string.IsNullOrWhiteSpace(vm.CustomerEmail))
-                        customer.Email = vm.CustomerEmail;
+                    // Update info if changed
+                    customer.Name = userName;
+                    customer.Email = userEmail;
                     _db.Customers.Update(customer);
                     await _db.SaveChangesAsync();
                 }
             }
 
-            // Calculate subtotal
-            var subtotal = cart.Rows.Sum(r => r.Price * r.Qty);
+            // Calculate subtotal - FIX: Use AsEnumerable() for client-side calculation
+            var subtotal = cart.Rows.AsEnumerable().Sum(r => r.Price * r.Qty);
 
-            // Apply tier discount
+            // Apply tier discount - async-safe approach: fetch orders async, then sum in memory
             decimal discount = 0m;
             if (customer != null && !string.IsNullOrWhiteSpace(customer.Phone))
             {
-                var lifetime = await _db.Orders
+                // Fetch matching orders from DB asynchronously
+                var orders = await _db.Orders
                     .Where(o => o.CustomerPhone == customer.Phone)
-                    .SumAsync(o => (decimal?)o.Total) ?? 0m;
+                    .ToListAsync();
+
+                // Sum on client side (works even if list is empty)
+                var lifetime = orders.Sum(o => o.Total);
 
                 var tierLevel = _tier.Evaluate(lifetime);
                 discount = tierLevel switch
@@ -106,7 +136,7 @@ namespace EasyGames.Web.Areas.Storefront.Controllers
             // Create order
             var order = new Order
             {
-                ShopId = 1, // Default shop or get from context
+                ShopId = 1, // Default online shop
                 CustomerId = customer?.Id,
                 CustomerPhone = customer?.Phone ?? userPhone,
                 Total = total,

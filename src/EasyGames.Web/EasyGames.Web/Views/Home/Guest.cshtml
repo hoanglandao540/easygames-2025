@@ -1,137 +1,204 @@
 ﻿@{
-    ViewData["Title"] = "Welcome (Guest)";
+    ViewData["Title"] = "Welcome to EasyGames";
 }
+
 <section class="container py-5">
-    <div class="text-center mb-4">
-        <h1 class="eg-h1">Welcome to EasyGames</h1>
-        <p class="lead">We’re your friendly shop for <strong>Games</strong>, <strong>Toys</strong>, and <strong>Books</strong>. Browse as a guest or sign in to shop.</p>
+    <div class="text-center mb-5">
+        <h1 class="eg-h1 display-4 mb-3">Welcome to EasyGames</h1>
+        <p class="lead text-light">Your one-stop shop for <strong class="text-warning">Games</strong>, <strong class="text-warning">Toys</strong>, and <strong class="text-warning">Books</strong></p>
+        <p class="text-secondary">Browse as a guest or sign in to unlock member benefits and track your orders</p>
     </div>
 
-    <!-- Role overview cards -->
-    <div class="row g-4 mb-5">
-        <div class="col-md-6 col-lg-3">
-            <div class="eg-card p-4 h-100">
-                <h4 class="mb-2">Owner (Admin)</h4>
-                <p class="mb-3">Manages products, shops, stock, and users. Sends updates to customers.</p>
-                <a class="eg-btn eg-btn-sm"
-                   asp-controller="Account" asp-action="LoginOwner">Admin Login</a>
-            </div>
-        </div>
-
-        <div class="col-md-6 col-lg-3">
-            <div class="eg-card p-4 h-100">
-                <h4 class="mb-2">Shop Proprietor</h4>
-                <p class="mb-3">Runs the store: sells via POS and keeps stock healthy.</p>
-                <a class="eg-btn eg-btn-sm"
-                   asp-controller="Account" asp-action="LoginShop">Shop Login</a>
-            </div>
-        </div>
-
-        <div class="col-md-6 col-lg-3">
-            <div class="eg-card p-4 h-100">
-                <h4 class="mb-2">Customer</h4>
-                <p class="mb-3">Browse, add to cart, and checkout. Track your orders and rewards.</p>
-                <div class="d-flex gap-2">
-                    <a class="eg-btn eg-btn-sm"
-                       asp-controller="Account" asp-action="LoginCustomer">Customer Login</a>
-                    <a class="eg-btn eg-btn-sm"
-                       asp-controller="Account" asp-action="Register">Register</a>
+    <div class="mb-5">
+        <h3 class="eg-h1 text-center mb-4">Choose Your Portal</h3>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="eg-card p-4 h-100 text-center">
+                    <div class="mb-3">
+                        <span class="badge bg-warning text-dark fs-5">Admin</span>
+                    </div>
+                    <h4 class="mb-3">Owner Portal</h4>
+                    <p class="mb-4 text-secondary">Manage products, shops, inventory, users, and send customer communications</p>
+                    <a class="eg-btn w-100" asp-controller="Account" asp-action="LoginOwner">
+                        Admin Login
+                    </a>
                 </div>
             </div>
-        </div>
 
-        <div class="col-md-6 col-lg-3">
-            <div class="eg-card p-4 h-100">
-                <h4 class="mb-2">Guest Mode</h4>
-                <p class="mb-3">Just looking? Continue as guest to explore what we sell.</p>
-                <a class="eg-btn eg-btn-sm"
-                   asp-area="Storefront" asp-controller="Catalog" asp-action="Index">Browse Catalog</a>
-            </div>
-        </div>
-    </div>
-
-    <!-- Our Departments: Games · Toys · Books -->
-    <div class="mb-3">
-        <h3 class="eg-h1">Our Departments</h3>
-    </div>
-
-    <div class="row g-4 mb-4">
-        <div class="col-md-6 col-lg-4">
-            <div class="eg-card p-4 h-100">
-                <h5 class="mb-2">Games</h5>
-                <ul class="mb-0">
-                    <li>Console & PC titles for all ages</li>
-                    <li>Family/co-op and competitive picks</li>
-                    <li>Pre-orders & seasonal favourites</li>
-                </ul>
-                <div class="mt-3">
-                    <a class="eg-btn eg-btn-sm"
-                       asp-area="Storefront" asp-controller="Catalog" asp-action="Index">See Games</a>
+            <div class="col-md-6 col-lg-3">
+                <div class="eg-card p-4 h-100 text-center">
+                    <div class="mb-3">
+                        <span class="badge bg-warning text-dark fs-5">Staff</span>
+                    </div>
+                    <h4 class="mb-3">Shop Portal</h4>
+                    <p class="mb-4 text-secondary">Access POS system, manage shop inventory, and process in-store sales</p>
+                    <a class="eg-btn w-100" asp-controller="Account" asp-action="LoginShop">
+                        Shop Login
+                    </a>
                 </div>
             </div>
-        </div>
 
-        <div class="col-md-6 col-lg-4">
-            <div class="eg-card p-4 h-100">
-                <h5 class="mb-2">Toys</h5>
-                <ul class="mb-0">
-                    <li>STEM kits & puzzles</li>
-                    <li>Outdoor toys & family fun</li>
-                    <li>Collectibles & gifts</li>
-                </ul>
-                <div class="mt-3">
-                    <a class="eg-btn eg-btn-sm"
-                       asp-area="Storefront" asp-controller="Catalog" asp-action="Index">See Toys</a>
+            <div class="col-md-6 col-lg-3">
+                <div class="eg-card p-4 h-100 text-center">
+                    <div class="mb-3">
+                        <span class="badge bg-warning text-dark fs-5">Member</span>
+                    </div>
+                    <h4 class="mb-3">Customer Portal</h4>
+                    <p class="mb-4 text-secondary">Shop online, track orders, view purchase history, and earn tier rewards</p>
+                    <div class="d-grid gap-2">
+                        <a class="eg-btn" asp-controller="Account" asp-action="LoginCustomer">
+                            Sign In
+                        </a>
+                        <a class="btn btn-outline-warning eg-btn-sm" asp-controller="Account" asp-action="Register">
+                            Register Now
+                        </a>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="col-md-6 col-lg-4">
-            <div class="eg-card p-4 h-100">
-                <h5 class="mb-2">Books</h5>
-                <ul class="mb-0">
-                    <li>Children’s stories & YA</li>
-                    <li>Graphic novels & art books</li>
-                    <li>Study guides & activity books</li>
-                </ul>
-                <div class="mt-3">
-                    <a class="eg-btn eg-btn-sm"
-                       asp-area="Storefront" asp-controller="Catalog" asp-action="Index">See Books</a>
+            <div class="col-md-6 col-lg-3">
+                <div class="eg-card p-4 h-100 text-center">
+                    <div class="mb-3">
+                        <span class="badge bg-secondary fs-5">Guest</span>
+                    </div>
+                    <h4 class="mb-3">Browse Mode</h4>
+                    <p class="mb-4 text-secondary">Explore our catalog without creating an account (no purchase/tracking)</p>
+                    <a class="eg-btn w-100" asp-area="Storefront" asp-controller="Catalog" asp-action="Index">
+                        Browse Catalog
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Services (not website tech; real shop services) -->
-    <div class="mb-3">
-        <h3 class="eg-h1">Store Services</h3>
+    <div class="mb-5">
+        <h3 class="eg-h1 text-center mb-4">Our Departments</h3>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="eg-card p-4 h-100">
+                    <h5 class="mb-3">🎮 Games</h5>
+                    <ul class="list-unstyled mb-4">
+                        <li class="mb-2">✓ Console & PC titles for all ages</li>
+                        <li class="mb-2">✓ Family co-op and competitive games</li>
+                        <li class="mb-2">✓ Pre-orders & seasonal favorites</li>
+                        <li class="mb-2">✓ Retro and collector editions</li>
+                    </ul>
+                    <a class="eg-btn eg-btn-sm w-100" asp-area="Storefront" asp-controller="Catalog" asp-action="Index" asp-route-category="Games">
+                        Shop Games
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="eg-card p-4 h-100">
+                    <h5 class="mb-3">🧸 Toys</h5>
+                    <ul class="list-unstyled mb-4">
+                        <li class="mb-2">✓ STEM kits & educational puzzles</li>
+                        <li class="mb-2">✓ Outdoor toys & family activities</li>
+                        <li class="mb-2">✓ Action figures & collectibles</li>
+                        <li class="mb-2">✓ Board games & party games</li>
+                    </ul>
+                    <a class="eg-btn eg-btn-sm w-100" asp-area="Storefront" asp-controller="Catalog" asp-action="Index" asp-route-category="Toys">
+                        Shop Toys
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="eg-card p-4 h-100">
+                    <h5 class="mb-3">📚 Books</h5>
+                    <ul class="list-unstyled mb-4">
+                        <li class="mb-2">✓ Children's stories & young adult</li>
+                        <li class="mb-2">✓ Graphic novels & manga</li>
+                        <li class="mb-2">✓ Art books & game guides</li>
+                        <li class="mb-2">✓ Educational & activity books</li>
+                    </ul>
+                    <a class="eg-btn eg-btn-sm w-100" asp-area="Storefront" asp-controller="Catalog" asp-action="Index" asp-route-category="Books">
+                        Shop Books
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="row g-4">
-        <div class="col-md-6 col-lg-3">
-            <div class="eg-card p-4 h-100">
-                <h5 class="mb-2">Click & Collect</h5>
-                <p class="mb-0">Reserve online and pick up at the shop.</p>
+
+    <div class="mb-5">
+        <h3 class="eg-h1 text-center mb-4">Store Services & Benefits</h3>
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="eg-card p-4 h-100 text-center">
+                    <div class="mb-3 fs-1">🛒</div>
+                    <h5 class="mb-2">Click & Collect</h5>
+                    <p class="mb-0 text-secondary small">Reserve online and pick up at any shop location</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="eg-card p-4 h-100 text-center">
+                    <div class="mb-3 fs-1">💎</div>
+                    <h5 class="mb-2">Rare Finds</h5>
+                    <p class="mb-0 text-secondary small">Discover rare and unique collectibles in-store</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="eg-card p-4 h-100 text-center">
+                    <div class="mb-3 fs-1">🎁</div>
+                    <h5 class="mb-2">Gift Wrapping</h5>
+                    <p class="mb-0 text-secondary small">Complimentary gift wrap available at checkout</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="eg-card p-4 h-100 text-center">
+                    <div class="mb-3 fs-1">↩️</div>
+                    <h5 class="mb-2">Easy Returns</h5>
+                    <p class="mb-0 text-secondary small">7-day hassle-free returns on unopened items</p>
+                </div>
             </div>
         </div>
-        <div class="col-md-6 col-lg-3">
-            <div class="eg-card p-4 h-100">
-                <h5 class="mb-2">Rare Collection</h5>
-                <p class="mb-0">Find Rare and unique things at the shop</p>
+    </div>
+
+    <div>
+        <h3 class="eg-h1 text-center mb-4">Membership Tier Rewards</h3>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="eg-card p-4 h-100">
+                    <div class="d-flex align-items-center mb-3">
+                        <span class="badge bg-secondary me-2">Bronze</span>
+                        <span class="text-secondary">$0+</span>
+                    </div>
+                    <p class="mb-0 small text-secondary">Standard member benefits and order tracking</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="eg-card p-4 h-100">
+                    <div class="d-flex align-items-center mb-3">
+                        <span class="badge bg-secondary me-2">Silver</span>
+                        <span class="text-warning">$200+</span>
+                    </div>
+                    <p class="mb-0 small"><strong class="text-warning">2% discount</strong> on all purchases</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="eg-card p-4 h-100">
+                    <div class="d-flex align-items-center mb-3">
+                        <span class="badge bg-warning text-dark me-2">Gold</span>
+                        <span class="text-warning">$500+</span>
+                    </div>
+                    <p class="mb-0 small"><strong class="text-warning">5% discount</strong> + priority support</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="eg-card p-4 h-100">
+                    <div class="d-flex align-items-center mb-3">
+                        <span class="badge bg-warning text-dark me-2">Platinum</span>
+                        <span class="text-warning">$1,000+</span>
+                    </div>
+                    <p class="mb-0 small"><strong class="text-warning">8% discount</strong> + exclusive offers</p>
+                </div>
             </div>
         </div>
-        <div class="col-md-6 col-lg-3">
-            <div class="eg-card p-4 h-100">
-                <h5 class="mb-2">Gift Wrap</h5>
-                <p class="mb-0">Optional gift wrapping at checkout.</p>
-            </div>
-        </div>
-        <div class="col-md-6 col-lg-3">
-            <div class="eg-card p-4 h-100">
-                <h5 class="mb-2">Easy Returns</h5>
-                <p class="mb-0">7-day simple exchange on unopened items.</p>
-            </div>
+        <div class="text-center mt-4">
+            <a class="eg-btn" asp-controller="Account" asp-action="Register">
+                Join Now - It's Free!
+            </a>
         </div>
     </div>
 </section>
-
-

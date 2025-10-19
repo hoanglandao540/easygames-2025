@@ -97,7 +97,6 @@ namespace EasyGames.Web.Controllers
                 new Claim(ClaimTypes.Role, user.Role.ToString())
             };
 
-            // Add phone claim for customers (needed for order history)
             if (!string.IsNullOrWhiteSpace(user.Phone))
             {
                 claims.Add(new Claim(ClaimTypes.MobilePhone, user.Phone));
@@ -112,11 +111,20 @@ namespace EasyGames.Web.Controllers
             return Redirect(defaultLanding);
         }
 
-        // ===== Logout =====
-        [HttpPost, ValidateAntiForgeryToken, Authorize]
+        // ===== FIXED LOGOUT =====
+        [Authorize]
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync();
+            // Clear session completely
+            HttpContext.Session.Clear();
+
+            // Sign out from authentication
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            // Set success message
+            TempData["toast"] = "You have been logged out successfully.";
+
+            // Redirect to Guest page (not Index which auto-redirects)
             return RedirectToAction("Guest", "Home");
         }
 

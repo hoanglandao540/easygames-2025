@@ -1,4 +1,3 @@
-/* Midnight + Gold theme  */
 :root {
     --eg-bg: #0b0f17;
     --eg-surface: #121826;
@@ -6,6 +5,7 @@
     --eg-gold: #d4b25d;
     --eg-gold2: #f1d386;
     --eg-border: #1f2940;
+    --eg-accent: #3a4a6b;
 }
 
 .eg-bg {
@@ -31,146 +31,292 @@
 .eg-nav {
     color: var(--eg-text);
     text-decoration: none;
+    transition: all 0.2s ease;
 }
 
     .eg-nav:hover {
         color: var(--eg-gold);
+        transform: translateY(-1px);
     }
 
+/* ===== IMPROVED CARD DESIGN ===== */
 .eg-card {
-    background: var(--eg-surface);
+    background: linear-gradient(135deg, var(--eg-surface) 0%, #161d2e 100%);
     border: 1px solid var(--eg-border);
-    border-radius: 18px;
-    box-shadow: 0 8px 24px rgba(0,0,0,.35);
-    padding: 16px;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,.4);
+    padding: 24px;
+    transition: all 0.3s ease;
 }
 
+    .eg-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 40px rgba(212, 178, 93, 0.15);
+        border-color: var(--eg-gold);
+    }
+
+    .eg-card h5, .eg-card h4, .eg-card h3 {
+        color: var(--eg-gold);
+        margin-bottom: 1rem;
+        font-weight: 600;
+    }
+
+/* ===== BUTTON STYLES ===== */
 .eg-btn {
-    background: var(--eg-gold);
-    color: #1b1b1b;
+    background: linear-gradient(135deg, var(--eg-gold) 0%, var(--eg-gold2) 100%);
+    color: #1b1b1b !important;
     border: 0;
-    border-radius: 12px;
-    padding: .5rem 1rem;
+    border-radius: 10px;
+    padding: .65rem 1.25rem;
     font-weight: 600;
     line-height: 1.2;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(212, 178, 93, 0.3);
+    text-decoration: none;
+    display: inline-block;
 }
 
     .eg-btn:hover {
-        background: var(--eg-gold2);
-        color: #000;
+        background: linear-gradient(135deg, var(--eg-gold2) 0%, #ffd966 100%);
+        color: #000 !important;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(212, 178, 93, 0.5);
     }
-/* compact button when needed */
+
 .eg-btn-sm {
-    padding: .35rem .75rem;
+    padding: .45rem .9rem;
     font-size: .9rem;
-    border-radius: 10px;
-}
-/* spacing between stacked buttons */
-.eg-btn + .eg-btn {
-    margin-left: .5rem;
+    border-radius: 8px;
 }
 
-.eg-input {
+.eg-qty-btntxt {
+    color: #000 !important;
+    transform: scale(1.5);
+}
+
+
+.eg-qty-btn {
+    background: var(--eg-gold) !important;
+    color: #000 !important;
+    border: 2px solid var(--eg-gold2) !important;
+    border-radius: 8px !important;
+    padding: .4rem .85rem !important;
+    font-weight: 700 !important;
+    font-size: 1.1rem !important;
+    min-width: 40px !important;
+    height: 40px !important;
+    transition: all 0.2s ease;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-decoration: none !important;
+    cursor: pointer;
+}
+
+    .eg-qty-btn:hover,
+    .eg-qty-btn:focus {
+        background: var(--eg-gold2) !important;
+        color: #000 !important;
+        border-color: #ffd966 !important;
+        transform: scale(1.05);
+        box-shadow: 0 0 12px rgba(212, 178, 93, 0.6) !important;
+    }
+
+    .eg-qty-btn:active {
+        transform: scale(0.95);
+    }
+
+.btn-group .eg-qty-btn {
+    margin: 0 !important;
+}
+
+.eg-qty-display {
+    color: var(--eg-gold) !important;
+    font-weight: 700;
+    font-size: 1.1rem;
+    min-width: 3ch;
+    text-align: center;
+    padding: 0 .75rem;
+    display: inline-block;
+}
+
+.eg-input,
+.form-control.eg-input,
+.form-select.eg-input {
     background: #0f1522;
     border: 1px solid var(--eg-border);
     color: var(--eg-text);
+    border-radius: 8px;
+    padding: .65rem;
+    transition: all 0.2s ease;
 }
 
+    .eg-input:focus,
+    .form-control.eg-input:focus,
+    .form-select.eg-input:focus {
+        background: #14192b;
+        border-color: var(--eg-gold);
+        color: var(--eg-text);
+        box-shadow: 0 0 0 0.2rem rgba(212, 178, 93, 0.25);
+    }
+
+/* ===== TABLES ===== */
 .eg-table {
     --bs-table-bg: var(--eg-surface);
     --bs-table-color: var(--eg-text);
     --bs-table-border-color: var(--eg-border);
 }
 
-/* typography */
+    .table.eg-table,
+    .eg-table.table {
+        --bs-table-color: var(--eg-text);
+        --bs-table-bg: var(--eg-surface);
+        --bs-table-border-color: var(--eg-border);
+    }
+
+    .eg-table th,
+    .eg-table td {
+        color: var(--eg-text) !important;
+        border-color: var(--eg-border) !important;
+        vertical-align: middle;
+        padding: .75rem;
+    }
+
+    .eg-table thead th {
+        color: var(--eg-gold) !important;
+        font-weight: 700;
+        border-bottom: 2px solid var(--eg-gold) !important;
+    }
+
+    .eg-table tbody tr {
+        border-bottom: 1px solid var(--eg-border);
+        transition: all 0.2s ease;
+    }
+
+        .eg-table tbody tr:hover {
+            background-color: #182238 !important;
+        }
+
+    .eg-table a {
+        color: var(--eg-gold) !important;
+        transition: all 0.2s ease;
+    }
+
+        .eg-table a:hover {
+            color: var(--eg-gold2) !important;
+            text-decoration: underline;
+        }
+
+    /* Right-align action column */
+    .eg-table th:last-child,
+    .eg-table td:last-child {
+        text-align: right;
+        width: 1%;
+        white-space: nowrap;
+    }
+
+        .eg-table td:last-child a,
+        .eg-table td:last-child .eg-btn,
+        .eg-table td:last-child button {
+            display: inline-block;
+            margin-left: .75rem;
+        }
+
+/* ===== TOAST NOTIFICATIONS ===== */
+.eg-toast {
+    background: linear-gradient(135deg, var(--eg-gold) 0%, var(--eg-gold2) 100%);
+    color: #1b1b1b;
+    padding: 1rem 1.5rem;
+    border-radius: 10px;
+    font-weight: 600;
+    box-shadow: 0 4px 16px rgba(212, 178, 93, 0.4);
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* ===== TYPOGRAPHY ===== */
 .eg-note {
     color: #9fb4ff;
-    font-size: .95rem
+    font-size: .95rem;
+    line-height: 1.5;
 }
 
 .eg-h1 {
     font-weight: 700;
     color: var(--eg-gold);
+    margin-bottom: 1.5rem;
 }
 
 a {
     text-decoration: none;
+    transition: all 0.2s ease;
 }
 
-/* ===== Tables: visibility + alignment + spacing ===== */
-.table.eg-table, .eg-table.table {
-    --bs-table-color: var(--eg-text);
-    --bs-table-bg: var(--eg-surface);
-    --bs-table-border-color: var(--eg-border);
+/* ===== BADGES ===== */
+.badge.bg-warning {
+    background: var(--eg-gold) !important;
+    color: #1b1b1b !important;
 }
 
-.eg-table th, .eg-table td {
-    color: var(--eg-text) !important;
-    border-color: var(--eg-border) !important;
-    vertical-align: middle; /* center content vertically */
-    padding: .65rem .75rem; /* consistent cell padding */
+.badge.bg-success {
+    background: #28a745 !important;
 }
 
-.eg-table thead th {
-    color: var(--eg-gold) !important;
-    font-weight: 700;
+.badge.bg-info {
+    background: #17a2b8 !important;
 }
 
-.eg-table tbody tr {
-    border-bottom: 1px solid var(--eg-border);
+.badge.bg-danger {
+    background: #dc3545 !important;
 }
 
-    .eg-table tbody tr:hover {
-        background-color: #182238 !important;
+/* ===== DROPDOWN MENUS ===== */
+.dropdown-menu-dark {
+    background: var(--eg-surface);
+    border: 1px solid var(--eg-border);
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.4);
+}
+
+    .dropdown-menu-dark .dropdown-item {
+        color: var(--eg-text);
+        transition: all 0.2s ease;
     }
 
-.eg-table a {
-    color: var(--eg-gold) !important;
-}
-
-    .eg-table a:hover {
-        color: var(--eg-gold2) !important;
-    }
-
-/* Right-align the last column (actions) and keep content on one line */
-.eg-table th:last-child,
-.eg-table td:last-child {
-    text-align: right;
-    width: 1%;
-    white-space: nowrap;
-}
-
-    /* Add even spacing between multiple action links/buttons */
-    .eg-table td:last-child a,
-    .eg-table td:last-child .eg-btn,
-    .eg-table td:last-child button {
-        display: inline-block;
-        margin-left: .75rem;
-    }
-
-        /* If author uses pipes in markup, soften their look a bit */
-        .eg-table td:last-child a + a::before,
-        .eg-table td:last-child .eg-btn + a::before,
-        .eg-table td:last-child a + .eg-btn::before {
-            content: "";
-            margin-right: 0;
+        .dropdown-menu-dark .dropdown-item:hover {
+            background: var(--eg-accent);
+            color: var(--eg-gold);
         }
 
-/* Optional: make tables full-width but keep comfortable content width on large screens */
-.container .eg-table {
-    width: 100%;
-}
-
-
-.eg-qty-btn {
-    background-color: var(--eg-gold);
-    color: #111 !important;
-    border: 1px solid var(--eg-gold2);
-}
-
-    .eg-qty-btn:hover, .eg-qty-btn:focus {
-        filter: brightness(0.92);
-        color: #000 !important;
+/* ===== RESPONSIVE IMPROVEMENTS ===== */
+@media (max-width: 768px) {
+    .eg-card {
+        padding: 16px;
     }
 
+    .eg-btn {
+        padding: .5rem 1rem;
+        font-size: .9rem;
+    }
 
+    .eg-table {
+        font-size: .9rem;
+    }
+
+    .eg-qty-btn {
+        min-width: 35px !important;
+        height: 35px !important;
+        padding: .3rem .7rem !important;
+    }
+}
